@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "common.proto";
 
 package emergencyCareService;
 
@@ -10,30 +11,22 @@ option java_outer_classname = "EmergencyCareServiceModel";
 option java_multiple_files = true;
 
 service EmergencyCareService{
-//  rpc GetDestinations(google.protobuf.Empty) returns (Destinations);
-//  rpc GetTrainsForDestination(google.protobuf.StringValue) returns (stream Train);
-//  rpc PurchaseTicket(stream Ticket) returns (Reservation);
-//  rpc GetTicketsForReservations(stream Reservation) returns (stream Ticket);
+  rpc StartAttention(Attention) returns (AttentionResponse);
+  rpc StartAllAttention(google.protobuf.Empty) returns (stream AttentionResponse);
+  rpc FinishAttention(Attention) returns (AttentionResponse);
 }
 
-//message Destinations {
-//  repeated string destinations = 1;
-//}
-//
-//message Train {
-//  string id = 1;
-//  string destination = 2;
-//  string time = 3;
-//  int32 availableCount = 4;
-//}
-//
-//message Ticket {
-//  string id = 1;
-//  string trainId = 2;
-//  string passengerName = 3;
-//}
-//
-//message Reservation {
-//  string id = 1;
-//  int32 ticketCount = 2;
-//}
+message Attention {
+  string patient = 1;
+  string doctor = 2;
+  int32 room = 3;
+}
+
+message AttentionResponse {
+  string patient = 1;
+  int32 patientLevel = 2;
+  string doctor = 3;
+  int32 doctorLevel = 4;
+  int32 room = 5;
+  bool isEmpty = 6;
+}

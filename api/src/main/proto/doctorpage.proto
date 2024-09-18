@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "common.proto";
 
 package doctorPageService;
 
@@ -10,39 +11,7 @@ option java_outer_classname = "DoctorPageServiceModel";
 option java_multiple_files = true;
 
 service DoctorPageService{
-  rpc AddPatient(RequestPatient) returns (Patient);
-  rpc ChangePatientLevel(RequestPatient) returns (Patient);
-  rpc WaitingTime(google.protobuf.StringValue) returns (PatientTime);
-}
-// Si el ID es negativo, hubo error
-message Room {
-  int32 id = 1;
-  bool isEmpty = 2;
-}
-/*
- * Si cdo devolvemos el level es -1 es xq el level es invalido,
- * si es -2 xq el name ya existe
- * el state es como un enum q si es 1 esta esperando, 2 esta siendo atendido y 3 si ya acabo la consulta
- */
-message Patient {
-  string name = 1;
-  int32 level = 2;
-  int32 state = 3;
+  rpc RegisterDoctor(google.protobuf.StringValue) returns (Doctor);
+  rpc UnsuscribeDoctor(google.protobuf.StringValue) returns (Doctor);
 }
 
-message RequestPatient {
-  string name = 1;
-  int32 level = 2;
-}
-
-message RequestDoctor{
-  string name = 1;
-  bool availability = 2;
-}
-
-message PatientTime {
-  string name = 1;
-  int32 level = 2;
-  int32 state = 3;
-  int32 patientsahead = 4;
-}

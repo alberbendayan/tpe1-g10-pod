@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "common.proto";
 
 package waitingRoomService;
 
@@ -15,11 +16,6 @@ service WaitingRoomService{
   rpc WaitingTime(google.protobuf.StringValue) returns (PatientTime);
 }
 
-// Si el ID es negativo, hubo error
-message Room {
-  int32 id = 1;
-  bool isEmpty = 2;
-}
 /*
  * Si cdo devolvemos el level es -1 es xq el level es invalido,
  * si es -2 xq el name ya existe

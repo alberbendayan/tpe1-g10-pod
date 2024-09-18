@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+message Patient {
+  string name = 1;
+  int32 level = 2;
+  int32 state = 3;
+}
+
+message RequestPatient {
+  string name = 1;
+  int32 level = 2;
+}
+
+message RequestDoctor{
+  string name = 1;
+  bool availability = 2;
+}
+
+message PatientTime {
+  string name = 1;
+  int32 level = 2;
+  int32 state = 3;
+  int32 patientsahead = 4;
+}
+
+// Si el ID es negativo, hubo error
+message Room {
+  int32 id = 1;
+  bool isEmpty = 2;
+}
+/*
+ * Si cdo devolvemos el level es -1 es xq el level es invalido,
+ * si es -2 xq el dr ya existe
+ * si es -3 xq la disponibilidad esta mal (esta atendiendo y lo quiero ocupar)
+ */
+message Doctor {
+  string name = 1;
+  int32 level = 2;
+  bool availability = 3;
+  bool isRegistered = 4;
+}
+
+message Attention {
+  string patient = 1;
+  string doctor = 2;
+  int32 room = 3;
+}
+
+message AttentionResponse {
+  string patient = 1;
+  int32 patientLevel = 2;
+  string doctor = 3;
+  int32 doctorLevel = 4;
+  int32 room = 5;
+  bool isEmpty = 6;
+}
