@@ -10,30 +10,29 @@ option java_outer_classname = "AdministrationServiceModel";
 option java_multiple_files = true;
 
 service administrationService{
-//  rpc GetDestinations(google.protobuf.Empty) returns (Destinations);
-//  rpc GetTrainsForDestination(google.protobuf.StringValue) returns (stream Train);
-//  rpc PurchaseTicket(stream Ticket) returns (Reservation);
-//  rpc GetTicketsForReservations(stream Reservation) returns (stream Ticket);
+  rpc AddRoom(google.protobuf.Empty) returns (Room);
+  rpc AddDoctor(Doctor) returns (Doctor);
+  rpc ChangeDoctorAvailability(RequestDoctor) returns (Doctor);
+  rpc GetDoctorAvailability(google.protobuf.StringValue) returns (Doctor);
 }
 
-//message Destinations {
-//  repeated string destinations = 1;
-//}
-//
-//message Train {
-//  string id = 1;
-//  string destination = 2;
-//  string time = 3;
-//  int32 availableCount = 4;
-//}
-//
-//message Ticket {
-//  string id = 1;
-//  string trainId = 2;
-//  string passengerName = 3;
-//}
-//
-//message Reservation {
-//  string id = 1;
-//  int32 ticketCount = 2;
-//}
+// Si el ID es negativo, hubo error
+message Room {
+  int32 id = 1;
+  bool isEmpty = 2;
+}
+/*
+ * Si cdo devolvemos el level es -1 es xq el level es invalido,
+ * si es -2 xq el dr ya existe
+ * si es -3 xq la disponibilidad esta mal (esta atendiendo y lo quiero ocupar)
+ */
+message Doctor {
+  string name = 1;
+  int32 level = 2;
+  bool availability = 3;
+}
+
+message RequestDoctor{
+  string name = 1;
+  bool availability = 2;
+}
