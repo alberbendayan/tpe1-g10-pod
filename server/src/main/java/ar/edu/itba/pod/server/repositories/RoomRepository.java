@@ -13,8 +13,10 @@ public class RoomRepository {
         this.rooms = new ArrayList<>();
     }
 
-    public void addRoom() {
-        rooms.add(Room.newBuilder().build());
+    public Room addRoom() {
+        Room room = Room.newBuilder().build();
+        rooms.add(room);
+        return room;
     }
 }
 

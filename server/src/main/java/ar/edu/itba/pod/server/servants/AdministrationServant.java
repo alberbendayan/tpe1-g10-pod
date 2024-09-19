@@ -12,9 +12,9 @@ import io.grpc.stub.StreamObserver;
 
 public class AdministrationServant extends AdministrationServiceGrpc.AdministrationServiceImplBase {
 
-    private RoomRepository roomRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
+    private final RoomRepository roomRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
 
     public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository) {
         this.roomRepository = new RoomRepository();
@@ -24,7 +24,9 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     @Override
     public void addRoom(Empty request, StreamObserver<Room> responseObserver) {
-        roomRepository.addRoom();
+        Room room = roomRepository.addRoom();
+        responseObserver.onNext(room);
+        responseObserver.onCompleted();
     }
 
     @Override
