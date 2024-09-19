@@ -1,4 +1,6 @@
 package ar.edu.itba.pod.server;
 
-public class DoctorPagerServant {
+import ar.edu.itba.pod.grpc.doctorPageService.DoctorPageServiceGrpc;
+
+public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceImplBase{
 }

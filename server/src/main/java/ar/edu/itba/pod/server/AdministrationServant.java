@@ -1,4 +1,6 @@
 package ar.edu.itba.pod.server;
 
-public class AdministrationServant {
+import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
+
+public class AdministrationServant extends AdministrationServiceGrpc.AdministrationServiceImplBase {
 }

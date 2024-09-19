@@ -6,7 +6,7 @@ import "common.proto";
 
 package emergencyCareService;
 
-option java_package = "ar.edu.itba.pod.emergencyCareService";
+option java_package = "ar.edu.itba.pod.grpc.emergencyCareService";
 option java_outer_classname = "EmergencyCareServiceModel";
 option java_multiple_files = true;
 

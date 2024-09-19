@@ -6,7 +6,7 @@ import "common.proto";
 
 package waitingRoomService;
 
-option java_package = "ar.edu.itba.pod.waitingRoomService";
+option java_package = "ar.edu.itba.pod.grpc.waitingRoomService";
 option java_outer_classname = "WaitingRoomServiceModel";
 option java_multiple_files = true;
 

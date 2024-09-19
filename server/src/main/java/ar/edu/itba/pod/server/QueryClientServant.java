@@ -1,4 +1,7 @@
 package ar.edu.itba.pod.server;
 
-public class QueryClientServant {
+import ar.edu.itba.pod.grpc.queryClientService.QueryClientServiceGrpc;
+
+
+public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServiceImplBase{
 }

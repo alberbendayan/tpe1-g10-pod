@@ -6,11 +6,11 @@ import "common.proto";
 
 package administrationService;
 
-option java_package = "ar.edu.itba.pod.administrationService";
+option java_package = "ar.edu.itba.pod.grpc.administrationService";
 option java_outer_classname = "AdministrationServiceModel";
 option java_multiple_files = true;
 
-service administrationService{
+service AdministrationService{
   rpc AddRoom(google.protobuf.Empty) returns (Room);
   rpc AddDoctor(common.Doctor) returns (common.Doctor);
   rpc ChangeDoctorAvailability(common.RequestDoctor) returns (common.Doctor);

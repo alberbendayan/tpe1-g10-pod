@@ -6,7 +6,7 @@ import "common.proto";
 
 package doctorPageService;
 
-option java_package = "ar.edu.itba.pod.doctorPageService";
+option java_package = "ar.edu.itba.pod.grpc.doctorPageService";
 option java_outer_classname = "DoctorPageServiceModel";
 option java_multiple_files = true;
 

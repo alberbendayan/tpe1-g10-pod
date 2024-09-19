@@ -1,4 +1,6 @@
 package ar.edu.itba.pod.server;
 
-public class EmergencyCareServant {
+import ar.edu.itba.pod.grpc.emergencyCareService.EmergencyCareServiceGrpc;
+
+public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCareServiceImplBase {
 }
