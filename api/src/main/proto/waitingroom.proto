@@ -11,9 +11,9 @@ option java_outer_classname = "WaitingRoomServiceModel";
 option java_multiple_files = true;
 
 service WaitingRoomService{
-  rpc AddPatient(RequestPatient) returns (Patient);
-  rpc ChangePatientLevel(RequestPatient) returns (Patient);
-  rpc WaitingTime(google.protobuf.StringValue) returns (PatientTime);
+  rpc AddPatient(common.RequestPatient) returns (common.Patient);
+  rpc ChangePatientLevel(common.RequestPatient) returns (common.Patient);
+  rpc WaitingTime(google.protobuf.StringValue) returns (common.PatientTime);
 }
 
 /*
@@ -21,25 +21,3 @@ service WaitingRoomService{
  * si es -2 xq el name ya existe
  * el state es como un enum q si es 1 esta esperando, 2 esta siendo atendido y 3 si ya acabo la consulta
  */
-message Patient {
-  string name = 1;
-  int32 level = 2;
-  int32 state = 3;
-}
-
-message RequestPatient {
-  string name = 1;
-  int32 level = 2;
-}
-
-message RequestDoctor{
-  string name = 1;
-  bool availability = 2;
-}
-
-message PatientTime {
-  string name = 1;
-  int32 level = 2;
-  int32 state = 3;
-  int32 patientsahead = 4;
-}

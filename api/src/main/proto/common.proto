@@ -3,6 +3,8 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
+package common;
+
 message Patient {
   string name = 1;
   int32 level = 2;

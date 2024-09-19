@@ -12,9 +12,9 @@ option java_multiple_files = true;
 
 service administrationService{
   rpc AddRoom(google.protobuf.Empty) returns (Room);
-  rpc AddDoctor(Doctor) returns (Doctor);
-  rpc ChangeDoctorAvailability(RequestDoctor) returns (Doctor);
-  rpc GetDoctorAvailability(google.protobuf.StringValue) returns (Doctor);
+  rpc AddDoctor(common.Doctor) returns (common.Doctor);
+  rpc ChangeDoctorAvailability(common.RequestDoctor) returns (common.Doctor);
+  rpc GetDoctorAvailability(google.protobuf.StringValue) returns (common.Doctor);
 }
 
 // Si el ID es negativo, hubo error
@@ -27,13 +27,3 @@ message Room {
  * si es -2 xq el dr ya existe
  * si es -3 xq la disponibilidad esta mal (esta atendiendo y lo quiero ocupar)
  */
-message Doctor {
-  string name = 1;
-  int32 level = 2;
-  bool availability = 3;
-}
-
-message RequestDoctor{
-  string name = 1;
-  bool availability = 2;
-}
