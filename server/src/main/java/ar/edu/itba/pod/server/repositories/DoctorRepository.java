@@ -104,8 +104,8 @@ public class DoctorRepository {
         // no encontre nada falla
     }
 
-    public Doctor getHighLevelFreeDoctor (){
-        for(int i=QTY_LEVELS_DOCTORS-1;i>=0;i--){
+    public Doctor getDoctorToPatient (int level){
+        for(int i=level-1;i<QTY_LEVELS_DOCTORS;i++){
             for (Map.Entry<String, Doctor> entry : doctors[i].entrySet()) {
                 Doctor doc = entry.getValue();
                 if (doc.getAvailability() == Availability.AVAILABILITY_AVAILABLE) {

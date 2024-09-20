@@ -20,8 +20,6 @@ public class PatientRepository {
         waitingPatients = new PriorityQueue[QTY_LEVELS];
         patients = new LinkedHashMap<>();
 
-
-
         for (int i = 0; i < QTY_LEVELS; i++) {
             waitingPatients[i] = new PriorityQueue<>(new Comparator<Patient>() {
                 @Override
@@ -101,8 +99,8 @@ public class PatientRepository {
         return null; //TODO ver si aca tirar error code
     }
 
-    public Patient getMostUrgentPatientFromLevel(int level){
-        for(int i = level -1;i>=0;i++){
+    public Patient getMostUrgentPatient(){
+        for(int i = QTY_LEVELS-1;i>=0;i--){
             if(!waitingPatients[i].isEmpty()){
                 return waitingPatients[i].poll();
             }

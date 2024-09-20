@@ -50,14 +50,15 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         if(!roomRepository.isFree(roomNumber)){
             return exitRoomOccupied(roomNumber,responseObserver);
         }
-        Doctor doctor = doctorRepository.getHighLevelFreeDoctor();
-        if(doctor == null){
-            return exitWithoutError(roomNumber,responseObserver);
-        }
-        Patient patient = patientRepository.getMostUrgentPatientFromLevel(doctor.getLevel());
+        Patient patient = patientRepository.getMostUrgentPatient();
         if(patient == null){
             return exitWithoutError(roomNumber,responseObserver);
         }
+        Doctor doctor = doctorRepository.getDoctorToPatient(patient.getLevel());
+        if(doctor == null){
+            return exitWithoutError(roomNumber,responseObserver);
+        }
+
         Patient newPatient = patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_ATTENDING);
 
         RequestDoctor requestDoctor = RequestDoctor.newBuilder()
