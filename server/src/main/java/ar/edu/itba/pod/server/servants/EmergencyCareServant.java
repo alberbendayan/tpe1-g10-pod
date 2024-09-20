@@ -9,7 +9,10 @@ import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import io.grpc.stub.StreamObserver;
+import org.checkerframework.checker.units.qual.A;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCareServiceImplBase {
@@ -26,30 +29,34 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         this.attentionRepository = attentionRepository;
     }
 
-    private void exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
-        AttentionResponse response = AttentionResponse.newBuilder()
+    private AttentionResponse exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
+        return  AttentionResponse.newBuilder()
                 .setPatientLevel(-1)
                 .setRoom(number)
                 .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+
     }
 
-    @Override
-    public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
+    private AttentionResponse exitRoomOccupied(int number,StreamObserver<AttentionResponse> responseObserver){
+        return AttentionResponse.newBuilder()
+                .setPatientLevel(-2)
+                .setRoom(number)
+                .build();
+
+    }
+
+    private AttentionResponse attention(Int32Value request, StreamObserver<AttentionResponse> responseObserver){
         int roomNumber = Integer.valueOf(String.valueOf(request));
         if(!roomRepository.isFree(roomNumber)){
-            // falla xq el room esta ocupad
+            return exitRoomOccupied(roomNumber,responseObserver);
         }
         Doctor doctor = doctorRepository.getHighLevelFreeDoctor();
         if(doctor == null){
-            exitWithoutError(roomNumber,responseObserver);
-            return;
+            return exitWithoutError(roomNumber,responseObserver);
         }
         Patient patient = patientRepository.getMostUrgentPatientFromLevel(doctor.getLevel());
         if(patient == null){
-            exitWithoutError(roomNumber,responseObserver);
-            return;
+            return exitWithoutError(roomNumber,responseObserver);
         }
         Patient newPatient = patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_ATTENDING);
 
@@ -70,6 +77,11 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .setRoom(roomNumber)
                 .setIsEmpty(true)
                 .build();
+        return response;
+    }
+    @Override
+    public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
+        AttentionResponse response = attention(request,responseObserver);
 
         attentionRepository.startAttention(response);
         responseObserver.onNext(response);
@@ -79,9 +91,11 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void startAllAttention(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<Room> freeRooms = roomRepository.getAllFreeRooms();
+        List<AttentionResponse> list = new ArrayList<>();
         for(Room room : freeRooms){
-            startAttention(Int32Value.of(room.getId()),responseObserver);
+            responseObserver.onNext(attention(Int32Value.of(room.getId()),responseObserver));
         }
+        responseObserver.onCompleted();
     }
 
     @Override

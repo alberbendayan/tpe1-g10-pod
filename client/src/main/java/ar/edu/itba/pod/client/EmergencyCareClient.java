@@ -20,8 +20,10 @@ public class EmergencyCareClient {
             switch (System.getProperty("action")) {
                 case "carePatient":
                     AttentionResponse attentionResponse = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
-                    if(attentionResponse.getPatientLevel() == -1){
-                        System.out.println("Room #"+attentionResponse.getRoom()+" remains free");
+                    if(attentionResponse.getPatientLevel() == -2){
+                        System.out.println("Room #"+attentionResponse.getRoom()+" remains Occupied");
+                    }else if(attentionResponse.getPatientLevel() == -1){
+                        System.out.println("Room #"+attentionResponse.getRoom()+" remains Free");
                     }else {
                         System.out.println("Patient " + attentionResponse.getPatient() + "(" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
                     }
