@@ -25,16 +25,19 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
 
     @Override
     public void addPatient(RequestPatient request, StreamObserver<Patient> responseObserver) {
-        super.addPatient(request, responseObserver);
+        Patient patient = patientRepository.addPatient(request.getDefaultInstanceForType());
+        responseObserver.onNext(patient);
+        responseObserver.onCompleted();
     }
 
     @Override
-    public void changePatientLevel(RequestPatient request, StreamObserver<Patient> responseObserver) {
-        super.changePatientLevel(request, responseObserver);
+    public void updateLevel(RequestPatient request, StreamObserver<Patient> responseObserver) {
+        patientRepository.updateLevel(request.getDefaultInstanceForType().getName(), request.getDefaultInstanceForType().getLevel());
+
     }
 
     @Override
-    public void waitingTime(StringValue request, StreamObserver<PatientTime> responseObserver) {
-        super.waitingTime(request, responseObserver);
+    public void checkPatient(StringValue request, StreamObserver<PatientTime> responseObserver) {
+        super.checkPatient(request, responseObserver);
     }
 }

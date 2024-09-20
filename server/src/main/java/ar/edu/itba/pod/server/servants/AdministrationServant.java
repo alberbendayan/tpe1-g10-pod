@@ -30,6 +30,7 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
         Room room = roomRepository.addRoom();
         responseObserver.onNext(room);
         responseObserver.onCompleted();
+
     }
 
     @Override
@@ -40,14 +41,14 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void changeDoctorAvailability(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
+    public void setDoctor(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.changeAvailability(request.getDefaultInstanceForType());
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getDoctorAvailability(StringValue request, StreamObserver<Doctor> responseObserver) {
+    public void checkDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.getAvailability(String.valueOf(request.getDefaultInstanceForType()));
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();

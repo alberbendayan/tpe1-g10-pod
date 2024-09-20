@@ -1,37 +1,46 @@
 package ar.edu.itba.pod.server.repositories;
 
 import ar.edu.itba.pod.grpc.common.Patient;
+import ar.edu.itba.pod.grpc.common.RequestPatient;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class PatientRepository {
 
-    private Map<String, Patient>[] patients;
-    private final int CANT_LEVELS = 5;
+    private Queue<Patient>[] patients;
+    private final int QTY_LEVELS = 5;
 
     public PatientRepository() {
-        patients = new Map[CANT_LEVELS];
+        patients = new LinkedList[QTY_LEVELS];
         for (int i = 0; i < patients.length; i++) {
-            patients[i] = new HashMap<>();
+            patients[i] = new LinkedList<>();
         }
     }
 
-    public Patient addPatient(Patient patient){
+    public Patient addPatient(RequestPatient requestPatient) {
+        int level = requestPatient.getLevel();
+        String name = requestPatient.getName();
+        Patient patient = Patient.newBuilder().setName(name).setLevel(level).build();
 
-        int level = patient.getLevel();
-        String name = patient.getName();
-
-        if(level<1 || level>5){
-            // error nivel invalido
+        if (level < 1 || level > 5) {
+            //TODO: error
         }
-        for(int i = 0; i< CANT_LEVELS; i++){
-            if(patients[i].containsKey(name)){
-                // error xq ya existe el dr
+        for (int i = 0; i < QTY_LEVELS; i++) {
+            if (patients[i].contains(name)) {
+                // TODO: error xq ya existe el dr
             }
         }
-        patients[level-1].put(name,patient);
+        patients[level - 1].add(patient);
 
         return patient;
+    }
+
+    public Patient updateLevel(String name, int newLevel) {
+        for (int i = 0; i < 5; i++) {
+            //TODO:
+        }
     }
 }

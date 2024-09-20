@@ -20,7 +20,7 @@ public class Server {
         DoctorRepository doctorRepository = new DoctorRepository();
         PatientRepository patientRepository = new PatientRepository();
 
-        int port = 50051;
+        int port = 50052;
         io.grpc.Server server = ServerBuilder.forPort(port)
                 .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository))
                 .addService(new AdministrationServant(roomRepository, doctorRepository, patientRepository))
