@@ -4,24 +4,36 @@ import ar.edu.itba.pod.grpc.common.Patient;
 import ar.edu.itba.pod.grpc.common.PatientTime;
 import ar.edu.itba.pod.grpc.common.RequestPatient;
 import ar.edu.itba.pod.grpc.common.State;
+import com.google.protobuf.Timestamp;
 
+import java.time.Instant;
 import java.util.*;
 
 public class PatientRepository {
 
-    //En la queue solo los q esperan
-    private Queue<String>[] waitingPatients;
+    private Queue<Patient>[] waitingPatients;
 
-    //Aca los que estan siendo atendidos y los que terminaron
     private Map<String,Patient> patients;
     private final int QTY_LEVELS = 5;
 
     public PatientRepository() {
-        waitingPatients = new LinkedList[QTY_LEVELS];
+        waitingPatients = new PriorityQueue[QTY_LEVELS];
         patients = new LinkedHashMap<>();
-        for (int i = 0; i < QTY_LEVELS; i++) {
-            waitingPatients[i] = new LinkedList<>();
 
+
+
+        for (int i = 0; i < QTY_LEVELS; i++) {
+            waitingPatients[i] = new PriorityQueue<>(new Comparator<Patient>() {
+                @Override
+                public int compare(Patient o1, Patient o2) {
+                    Timestamp t1 = o1.getTime();
+                    Timestamp t2 = o2.getTime();
+                    if(t1.getSeconds() == t2.getSeconds()){
+                        return t1.getNanos()-t2.getNanos();
+                    }
+                    return Long.compare(t1.getSeconds(), t2.getSeconds());
+                }
+            });
         }
     }
 
@@ -35,27 +47,35 @@ public class PatientRepository {
         if (patients.containsKey(name)) {
             // TODO: error xq ya existe el patient
         }
-        waitingPatients[level - 1].add(name);
+        waitingPatients[level - 1].add(patients.get(name));
+        Instant now = Instant.now();
+        Timestamp timestamp= Timestamp.newBuilder()
+                .setSeconds(now.getEpochSecond())
+                .setNanos(now.getNano())
+                .build();
+
         Patient patient = Patient.newBuilder()
                 .setName(name)
                 .setLevel(level)
+                .setTime(timestamp)
                 .build();
+
         patients.put(name,patient);
         return patient;
     }
 
     public Patient updateLevel(String name, int newLevel) {
         for (int i = 0; i < QTY_LEVELS; i++) {
-            for (String p : waitingPatients[i]) {
-                if (p.equals(name) && newLevel != patients.get(name).getLevel()) {
-                    waitingPatients[i].remove(name);
+            for (Patient p : waitingPatients[i]) {
+                if (p.getName().equals(name) && newLevel != patients.get(name).getLevel()) {
+                    waitingPatients[i].remove(patients.get(name));
                     Patient patient = Patient.newBuilder()
                             .setLevel(newLevel)
                             .setName(name)
                             .setState(State.STATE_WAITING)
                             .build();
 
-                    waitingPatients[newLevel - 1].add(name);
+                    waitingPatients[newLevel - 1].add(patients.get(name));
                     patients.remove(name);
                     patients.put(name,patient);
                     return patient;
@@ -68,8 +88,8 @@ public class PatientRepository {
     public PatientTime checkPatient(String name) {
         int counter = 0;
         for (int i = QTY_LEVELS - 1; i >= 0; i--) {
-            for (String p : waitingPatients[i]) {
-                if (p.equals(name)) {
+            for (Patient p : waitingPatients[i]) {
+                if (p.getName().equals(name)) {
                     return PatientTime.newBuilder()
                             .setPatient(patients.get(p))
                             .setPatientsAhead(counter)
@@ -84,8 +104,7 @@ public class PatientRepository {
     public Patient getMostUrgentPatientFromLevel(int level){
         for(int i = level -1;i>=0;i++){
             if(!waitingPatients[i].isEmpty()){
-                String name = waitingPatients[i].poll();
-                return patients.get(name);
+                return waitingPatients[i].poll();
             }
         }
         return null;
@@ -93,7 +112,7 @@ public class PatientRepository {
 
     public Patient changeStatus(String name,int level,State state){
         if(state != State.STATE_WAITING){
-            waitingPatients[level-1].remove(name);
+            waitingPatients[level-1].remove(patients.get(name));
         }
         Patient patient = Patient.newBuilder()
                 .setState(state)

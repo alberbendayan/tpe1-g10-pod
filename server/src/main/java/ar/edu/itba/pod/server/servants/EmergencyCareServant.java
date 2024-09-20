@@ -26,6 +26,14 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         this.attentionRepository = attentionRepository;
     }
 
+    private void exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
+        AttentionResponse response = AttentionResponse.newBuilder()
+                .setPatientLevel(-1)
+                .setRoom(number)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
 
     @Override
     public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
@@ -35,10 +43,14 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         }
         Doctor doctor = doctorRepository.getHighLevelFreeDoctor();
         if(doctor == null){
-            // no hay ningun doctor disponible
+            exitWithoutError(roomNumber,responseObserver);
+            return;
         }
         Patient patient = patientRepository.getMostUrgentPatientFromLevel(doctor.getLevel());
-
+        if(patient == null){
+            exitWithoutError(roomNumber,responseObserver);
+            return;
+        }
         Patient newPatient = patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_ATTENDING);
 
         RequestDoctor requestDoctor = RequestDoctor.newBuilder()
