@@ -12,7 +12,7 @@ option java_multiple_files = true;
 
 service AdministrationService{
   rpc AddRoom(google.protobuf.Empty) returns (common.Room);
-  rpc AddDoctor(common.Doctor) returns (common.Doctor);
+  rpc AddDoctor(common.RequestDoctorLevel) returns (common.Doctor);
   rpc ChangeDoctorAvailability(common.RequestDoctor) returns (common.Doctor);
   rpc GetDoctorAvailability(google.protobuf.StringValue) returns (common.Doctor);
 }

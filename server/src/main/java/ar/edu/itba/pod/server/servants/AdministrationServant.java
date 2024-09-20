@@ -3,6 +3,7 @@ package ar.edu.itba.pod.server.servants;
 
 import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
 import ar.edu.itba.pod.grpc.common.RequestDoctor;
+import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
 import ar.edu.itba.pod.grpc.common.Room;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
@@ -32,7 +33,7 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void addDoctor(Doctor request, StreamObserver<Doctor> responseObserver) {
+    public void addDoctor(RequestDoctorLevel request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.addDoctor(request.getDefaultInstanceForType());
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
@@ -40,11 +41,15 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     @Override
     public void changeDoctorAvailability(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
-        super.changeDoctorAvailability(request, responseObserver);
+        Doctor doctor = doctorRepository.changeAvailability(request.getDefaultInstanceForType());
+        responseObserver.onNext(doctor);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void getDoctorAvailability(StringValue request, StreamObserver<Doctor> responseObserver) {
-        super.getDoctorAvailability(request, responseObserver);
+        Doctor doctor = doctorRepository.getAvailability(String.valueOf(request.getDefaultInstanceForType()));
+        responseObserver.onNext(doctor);
+        responseObserver.onCompleted();
     }
 }

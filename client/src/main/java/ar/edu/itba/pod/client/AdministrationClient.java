@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
+import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
 import com.google.protobuf.Empty;
 import io.grpc.ManagedChannel;
 
@@ -17,7 +18,11 @@ public class AdministrationClient {
                     blockingStub.addRoom(Empty.newBuilder().build());
                     break;
                 case "addDoctor":
-                    //blockingStub.addDoctor(System.getProperty("doctor"), System.getProperty("level"))
+                    blockingStub.addDoctor(RequestDoctorLevel.newBuilder()
+                            .setName( System.getProperty("doctor"))
+                            .setLevel(Integer.parseInt(System.getProperty("level")))
+                            .build()
+                    );
                     break;
                 case "setDoctor":
                     //blockingStub.setDoctor(System.getProperty("doctor"), System.getProperty("availability")

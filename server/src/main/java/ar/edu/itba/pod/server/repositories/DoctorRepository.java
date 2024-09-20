@@ -1,22 +1,25 @@
 package ar.edu.itba.pod.server.repositories;
 
+import ar.edu.itba.pod.grpc.common.Availability;
 import ar.edu.itba.pod.grpc.common.Doctor;
+import ar.edu.itba.pod.grpc.common.RequestDoctor;
+import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class DoctorRepository {
     private Map<String, Doctor>[] doctors;
-    private final int CANT_LEVELS_DOCTORS = 5;
+    private final int QTY_LEVELS_DOCTORS = 5;
 
     public DoctorRepository() {
-        doctors = new Map[CANT_LEVELS_DOCTORS];
+        doctors = new Map[QTY_LEVELS_DOCTORS];
         for (int i = 0; i < doctors.length; i++) {
             doctors[i] = new HashMap<>();
         }
     }
 
-    public Doctor addDoctor(Doctor doctor){
+    public Doctor addDoctor(RequestDoctorLevel doctor){
 
         int level = doctor.getLevel();
         String name = doctor.getName();
@@ -24,14 +27,56 @@ public class DoctorRepository {
         if(level<1 || level>5){
             // error nivel invalido
         }
-        for(int i = 0; i< CANT_LEVELS_DOCTORS; i++){
+        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
             if(doctors[i].containsKey(name)){
                 // error xq ya existe el dr
             }
         }
-        doctors[level-1].put(name,doctor);
+        Doctor doc = Doctor.newBuilder()
+                .setName(name)
+                .setLevel(level)
+                .setAvailability(Availability.AVAILABILITY_AVAILABLE)
+                .setIsRegistered(false)
+                .build();
+        doctors[level-1].put(name,doc);
 
-        return doctor;
+        return doc;
+    }
+
+    public Doctor changeAvailability(RequestDoctor doctor){
+
+        String name = doctor.getName();
+        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
+            if(doctors[i].containsKey(name)){
+                Doctor old = doctors[i].get(name);
+                if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
+                    // error
+                }else{
+                    Doctor doc = Doctor.newBuilder()
+                            .setName(name)
+                            .setLevel(old.getLevel())
+                            .setAvailability(doctor.getAvailability())
+                            .setIsRegistered(old.getIsRegistered())
+                            .build();
+                    doctors[i].remove(name);
+                    doctors[i].put(name,doc);
+                    return doc;
+                }
+            }
+        }
+        return null;
+        // no encontre nada falla
+    }
+
+    public Doctor getAvailability(String name){
+
+        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
+            if(doctors[i].containsKey(name)){
+                return doctors[i].get(name);
+            }
+        }
+        return null;
+        // no encontre nada falla
     }
 
 }
