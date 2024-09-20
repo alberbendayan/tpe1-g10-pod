@@ -11,7 +11,7 @@ import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
 
 
-public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServiceImplBase{
+public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServiceImplBase {
 
     private RoomRepository roomRepository;
     private DoctorRepository doctorRepository;
@@ -32,12 +32,13 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
 
     @Override
     public void updateLevel(RequestPatient request, StreamObserver<Patient> responseObserver) {
-        patientRepository.updateLevel(request.getDefaultInstanceForType().getName(), request.getDefaultInstanceForType().getLevel());
-
+        Patient patient = patientRepository.updateLevel(request.getDefaultInstanceForType().getName(), request.getDefaultInstanceForType().getLevel());
+        responseObserver.onNext(patient);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void checkPatient(StringValue request, StreamObserver<PatientTime> responseObserver) {
-        super.checkPatient(request, responseObserver);
+        patientRepository.checkPatient(request.getDefaultInstanceForType().getValue());
     }
 }

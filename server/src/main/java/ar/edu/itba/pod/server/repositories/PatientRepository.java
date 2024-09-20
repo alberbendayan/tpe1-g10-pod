@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.server.repositories;
 
 import ar.edu.itba.pod.grpc.common.Patient;
+import ar.edu.itba.pod.grpc.common.PatientTime;
 import ar.edu.itba.pod.grpc.common.RequestPatient;
 
 import java.util.HashMap;
@@ -39,8 +40,30 @@ public class PatientRepository {
     }
 
     public Patient updateLevel(String name, int newLevel) {
-        for (int i = 0; i < 5; i++) {
-            //TODO:
+        for (int i = 0; i < QTY_LEVELS; i++) {
+            for (Patient p : patients[i]) {
+                if (p.getName().equals(name)) {
+                    patients[i].remove(p);
+                    patients[newLevel - 1].add(p);
+                    return p;
+                }
+            }
         }
+        return null; //TODO ver si aca tirar error code
     }
+
+    public PatientTime checkPatient(String name) {
+        int counter = 0;
+        for (int i = QTY_LEVELS - 1; i >= 0; i--) {
+            for (Patient p : patients[i]) {
+                if (p.getName().equals(name)) {
+                    return PatientTime.newBuilder().setPatient(p).setPatientsAhead(counter).build();
+                }
+                counter++;
+            }
+        }
+        return null; //TODO ver si aca tirar error code
+    }
+
+
 }

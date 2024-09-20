@@ -45,10 +45,8 @@ message RequestDoctor{
 }
 
 message PatientTime {
-  string name = 1;
-  int32 level = 2;
-  State state = 3;
-  int32 patientsahead = 4;
+  Patient patient = 1;
+  int32 patientsAhead = 2;
 }
 
 // Si el ID es negativo, hubo error
