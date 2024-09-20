@@ -1,11 +1,13 @@
 package ar.edu.itba.pod.server.servants;
 
+import ar.edu.itba.pod.grpc.common.Attention;
+import ar.edu.itba.pod.grpc.common.Patient;
+import ar.edu.itba.pod.grpc.common.Room;
 import ar.edu.itba.pod.grpc.queryClientService.QueryClientServiceGrpc;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.StringValue;
-import common.Common;
 import io.grpc.stub.StreamObserver;
 
 
@@ -22,17 +24,17 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     }
 
     @Override
-    public void getRooms(StringValue request, StreamObserver<Common.Room> responseObserver) {
+    public void getRooms(StringValue request, StreamObserver<Room> responseObserver) {
         super.getRooms(request, responseObserver);
     }
 
     @Override
-    public void getPatients(StringValue request, StreamObserver<Common.Patient> responseObserver) {
+    public void getPatients(StringValue request, StreamObserver<Patient> responseObserver) {
         super.getPatients(request, responseObserver);
     }
 
     @Override
-    public void getAttentions(StringValue request, StreamObserver<Common.Attention> responseObserver) {
+    public void getAttentions(StringValue request, StreamObserver<Attention> responseObserver) {
         super.getAttentions(request, responseObserver);
     }
 }

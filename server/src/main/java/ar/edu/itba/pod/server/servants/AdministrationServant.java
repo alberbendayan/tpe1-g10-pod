@@ -1,13 +1,15 @@
 package ar.edu.itba.pod.server.servants;
 
+
 import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
-import ar.edu.itba.pod.grpc.administrationService.Room;
+import ar.edu.itba.pod.grpc.common.RequestDoctor;
+import ar.edu.itba.pod.grpc.common.Room;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
-import common.Common;
+import ar.edu.itba.pod.grpc.common.Doctor;
 import io.grpc.stub.StreamObserver;
 
 public class AdministrationServant extends AdministrationServiceGrpc.AdministrationServiceImplBase {
@@ -30,17 +32,19 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void addDoctor(Common.Doctor request, StreamObserver<Common.Doctor> responseObserver) {
-        super.addDoctor(request, responseObserver);
+    public void addDoctor(Doctor request, StreamObserver<Doctor> responseObserver) {
+        Doctor doctor = doctorRepository.addDoctor(request.getDefaultInstanceForType());
+        responseObserver.onNext(doctor);
+        responseObserver.onCompleted();
     }
 
     @Override
-    public void changeDoctorAvailability(Common.RequestDoctor request, StreamObserver<Common.Doctor> responseObserver) {
+    public void changeDoctorAvailability(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
         super.changeDoctorAvailability(request, responseObserver);
     }
 
     @Override
-    public void getDoctorAvailability(StringValue request, StreamObserver<Common.Doctor> responseObserver) {
+    public void getDoctorAvailability(StringValue request, StreamObserver<Doctor> responseObserver) {
         super.getDoctorAvailability(request, responseObserver);
     }
 }

@@ -11,6 +11,7 @@
 //    private static Logger logger = LoggerFactory.getLogger(Client.class);
 //
 //    public static void main(String[] args) throws InterruptedException {
+//        ManagedChannel channel = ChannelCreator.createChannel();
 //
 //
 //        try {

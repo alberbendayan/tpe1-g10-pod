@@ -12,7 +12,6 @@ public class AdministrationClient {
 
         try {
             AdministrationServiceGrpc.AdministrationServiceBlockingStub blockingStub = AdministrationServiceGrpc.newBlockingStub(channel);
-
             switch (System.getProperty("action")) {
                 case "addRoom":
                     blockingStub.addRoom(Empty.newBuilder().build());
