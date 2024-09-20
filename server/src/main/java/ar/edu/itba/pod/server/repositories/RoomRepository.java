@@ -23,6 +23,31 @@ public class RoomRepository {
         return room;
     }
 
+    public boolean isFree(int number){
+        return rooms.get(number-1).getIsEmpty();
+    }
+
+    public Room setOccupied(int number){
+        if(!isFree(number)){
+            return null;
+        }
+        Room room = Room.newBuilder()
+                .setId(number)
+                .setIsEmpty(false)
+                .build();
+        rooms.set(number-1,room);
+        return room;
+    }
+
+    public List<Room> getAllFreeRooms(){
+        List<Room> ret = new ArrayList<>();
+        for(Room room:rooms){
+            if(room.getIsEmpty()){
+                ret.add(room);
+            }
+        }
+        return ret;
+    }
 }
 
 

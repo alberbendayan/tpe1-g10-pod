@@ -7,6 +7,7 @@ import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DoctorRepository {
     private Map<String, Doctor>[] doctors;
@@ -15,7 +16,7 @@ public class DoctorRepository {
     public DoctorRepository() {
         doctors = new Map[QTY_LEVELS_DOCTORS];
         for (int i = 0; i < doctors.length; i++) {
-            doctors[i] = new HashMap<>();
+            doctors[i] = new TreeMap<>();
         }
     }
 
@@ -68,6 +69,30 @@ public class DoctorRepository {
         // no encontre nada falla
     }
 
+    public Doctor changeAvailability(RequestDoctor doctor,int level){
+
+        String name = doctor.getName();
+            if(doctors[level-1].containsKey(name)){
+                Doctor old = doctors[level-1].get(name);
+                if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
+                    // error
+                }else{
+                    Doctor doc = Doctor.newBuilder()
+                            .setName(name)
+                            .setLevel(old.getLevel())
+                            .setAvailability(doctor.getAvailability())
+                            .setIsRegistered(old.getIsRegistered())
+                            .build();
+                    doctors[level-1].remove(name);
+                    doctors[level-1].put(name,doc);
+                    return doc;
+                }
+            }
+
+        return null;
+        // no encontre nada falla
+    }
+
     public Doctor getAvailability(String name){
 
         for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
@@ -77,6 +102,18 @@ public class DoctorRepository {
         }
         return null;
         // no encontre nada falla
+    }
+
+    public Doctor getHighLevelFreeDoctor (){
+        for(int i=QTY_LEVELS_DOCTORS-1;i>=0;i--){
+            for (Map.Entry<String, Doctor> entry : doctors[i].entrySet()) {
+                Doctor doc = entry.getValue();
+                if (doc.getAvailability() == Availability.AVAILABILITY_AVAILABLE) {
+                    return doc;
+                }
+            }
+        }
+        return null;
     }
 
 }

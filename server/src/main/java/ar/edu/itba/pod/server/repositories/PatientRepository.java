@@ -3,49 +3,62 @@ package ar.edu.itba.pod.server.repositories;
 import ar.edu.itba.pod.grpc.common.Patient;
 import ar.edu.itba.pod.grpc.common.PatientTime;
 import ar.edu.itba.pod.grpc.common.RequestPatient;
+import ar.edu.itba.pod.grpc.common.State;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class PatientRepository {
 
-    private Queue<Patient>[] patients;
+    //En la queue solo los q esperan
+    private Queue<String>[] waitingPatients;
+
+    //Aca los que estan siendo atendidos y los que terminaron
+    private Map<String,Patient> patients;
     private final int QTY_LEVELS = 5;
 
     public PatientRepository() {
-        patients = new LinkedList[QTY_LEVELS];
-        for (int i = 0; i < patients.length; i++) {
-            patients[i] = new LinkedList<>();
+        waitingPatients = new LinkedList[QTY_LEVELS];
+        patients = new LinkedHashMap<>();
+        for (int i = 0; i < QTY_LEVELS; i++) {
+            waitingPatients[i] = new LinkedList<>();
+
         }
     }
 
     public Patient addPatient(RequestPatient requestPatient) {
         int level = requestPatient.getLevel();
         String name = requestPatient.getName();
-        Patient patient = Patient.newBuilder().setName(name).setLevel(level).build();
 
         if (level < 1 || level > 5) {
             //TODO: error
         }
-        for (int i = 0; i < QTY_LEVELS; i++) {
-            if (patients[i].contains(name)) {
-                // TODO: error xq ya existe el dr
-            }
+        if (patients.containsKey(name)) {
+            // TODO: error xq ya existe el patient
         }
-        patients[level - 1].add(patient);
-
+        waitingPatients[level - 1].add(name);
+        Patient patient = Patient.newBuilder()
+                .setName(name)
+                .setLevel(level)
+                .build();
+        patients.put(name,patient);
         return patient;
     }
 
     public Patient updateLevel(String name, int newLevel) {
         for (int i = 0; i < QTY_LEVELS; i++) {
-            for (Patient p : patients[i]) {
-                if (p.getName().equals(name)) {
-                    patients[i].remove(p);
-                    patients[newLevel - 1].add(p);
-                    return p;
+            for (String p : waitingPatients[i]) {
+                if (p.equals(name) && newLevel != patients.get(name).getLevel()) {
+                    waitingPatients[i].remove(name);
+                    Patient patient = Patient.newBuilder()
+                            .setLevel(newLevel)
+                            .setName(name)
+                            .setState(State.STATE_WAITING)
+                            .build();
+
+                    waitingPatients[newLevel - 1].add(name);
+                    patients.remove(name);
+                    patients.put(name,patient);
+                    return patient;
                 }
             }
         }
@@ -55,9 +68,12 @@ public class PatientRepository {
     public PatientTime checkPatient(String name) {
         int counter = 0;
         for (int i = QTY_LEVELS - 1; i >= 0; i--) {
-            for (Patient p : patients[i]) {
-                if (p.getName().equals(name)) {
-                    return PatientTime.newBuilder().setPatient(p).setPatientsAhead(counter).build();
+            for (String p : waitingPatients[i]) {
+                if (p.equals(name)) {
+                    return PatientTime.newBuilder()
+                            .setPatient(patients.get(p))
+                            .setPatientsAhead(counter)
+                            .build();
                 }
                 counter++;
             }
@@ -65,5 +81,28 @@ public class PatientRepository {
         return null; //TODO ver si aca tirar error code
     }
 
+    public Patient getMostUrgentPatientFromLevel(int level){
+        for(int i = level -1;i>=0;i++){
+            if(!waitingPatients[i].isEmpty()){
+                String name = waitingPatients[i].poll();
+                return patients.get(name);
+            }
+        }
+        return null;
+    }
+
+    public Patient changeStatus(String name,int level,State state){
+        if(state != State.STATE_WAITING){
+            waitingPatients[level-1].remove(name);
+        }
+        Patient patient = Patient.newBuilder()
+                .setState(state)
+                .setName(name)
+                .setLevel(level)
+                .build();
+        patients.remove(name);
+        patients.put(name,patient);
+        return patient;
+    }
 
 }

@@ -4,6 +4,7 @@ import ar.edu.itba.pod.grpc.common.Attention;
 import ar.edu.itba.pod.grpc.common.Patient;
 import ar.edu.itba.pod.grpc.common.Room;
 import ar.edu.itba.pod.grpc.queryClientService.QueryClientServiceGrpc;
+import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
@@ -16,11 +17,13 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     private RoomRepository roomRepository;
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
+    private AttentionRepository attentionRepository;
 
-    public QueryClientServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository) {
-        this.roomRepository = new RoomRepository();
-        this.doctorRepository = new DoctorRepository();
-        this.patientRepository = new PatientRepository();
+    public QueryClientServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+        this.roomRepository = roomRepository;
+        this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
+        this.attentionRepository = attentionRepository;
     }
 
     @Override

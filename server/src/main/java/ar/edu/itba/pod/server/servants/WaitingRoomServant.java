@@ -4,6 +4,7 @@ import ar.edu.itba.pod.grpc.common.Patient;
 import ar.edu.itba.pod.grpc.common.PatientTime;
 import ar.edu.itba.pod.grpc.common.RequestPatient;
 import ar.edu.itba.pod.grpc.waitingRoomService.WaitingRoomServiceGrpc;
+import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
@@ -16,11 +17,13 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
     private RoomRepository roomRepository;
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
+    private AttentionRepository attentionRepository;
 
-    public WaitingRoomServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository) {
-        this.roomRepository = new RoomRepository();
-        this.doctorRepository = new DoctorRepository();
-        this.patientRepository = new PatientRepository();
+    public WaitingRoomServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+        this.roomRepository = roomRepository;
+        this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
+        this.attentionRepository = attentionRepository;
     }
 
     @Override

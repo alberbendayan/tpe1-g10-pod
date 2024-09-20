@@ -11,7 +11,7 @@ option java_outer_classname = "EmergencyCareServiceModel";
 option java_multiple_files = true;
 
 service EmergencyCareService{
-  rpc StartAttention(common.Attention) returns (common.AttentionResponse);
+  rpc StartAttention(google.protobuf.Int32Value) returns (common.AttentionResponse);
   rpc StartAllAttention(google.protobuf.Empty) returns (stream common.AttentionResponse);
   rpc FinishAttention(common.Attention) returns (common.AttentionResponse);
 }

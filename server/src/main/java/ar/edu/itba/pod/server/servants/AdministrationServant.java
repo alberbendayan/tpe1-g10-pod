@@ -5,6 +5,7 @@ import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
 import ar.edu.itba.pod.grpc.common.RequestDoctor;
 import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
 import ar.edu.itba.pod.grpc.common.Room;
+import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
@@ -18,11 +19,13 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     private final RoomRepository roomRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private AttentionRepository attentionRepository;
 
-    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository) {
-        this.roomRepository = new RoomRepository();
-        this.doctorRepository = new DoctorRepository();
-        this.patientRepository = new PatientRepository();
+    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+        this.roomRepository = roomRepository;
+        this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
+        this.attentionRepository = attentionRepository;
     }
 
     @Override

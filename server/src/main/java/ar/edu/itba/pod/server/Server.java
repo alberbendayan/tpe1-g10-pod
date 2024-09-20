@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.server;
 
+import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
@@ -19,14 +20,15 @@ public class Server {
         RoomRepository roomRepository = new RoomRepository();
         DoctorRepository doctorRepository = new DoctorRepository();
         PatientRepository patientRepository = new PatientRepository();
+        AttentionRepository attentionRepository = new AttentionRepository();
 
         int port = 50052;
         io.grpc.Server server = ServerBuilder.forPort(port)
-                .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository))
-                .addService(new AdministrationServant(roomRepository, doctorRepository, patientRepository))
-                .addService(new QueryClientServant(roomRepository, doctorRepository, patientRepository))
-                .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository))
-                .addService(new WaitingRoomServant(roomRepository, doctorRepository, patientRepository))
+                .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new AdministrationServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new QueryClientServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new WaitingRoomServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
                 .build();
         server.start();
         logger.info("Server started, listening on " + port);
