@@ -48,6 +48,13 @@ public class RoomRepository {
         }
         return ret;
     }
+
+    public List<Room> getRooms(){
+        List<Room> ret = new ArrayList<>();
+        ret.addAll(rooms);
+        return ret;
+    }
+
 }
 
 

@@ -12,7 +12,7 @@ option java_multiple_files = true;
 
 service WaitingRoomService{
   rpc AddPatient(common.RequestPatient) returns (common.Patient);
-  rpc updateLevel(common.RequestPatient) returns (common.Patient);
+  rpc UpdateLevel(common.RequestPatient) returns (common.Patient);
   rpc CheckPatient(google.protobuf.StringValue) returns (common.PatientTime);
 }
 

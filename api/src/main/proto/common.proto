@@ -55,6 +55,7 @@ message PatientTime {
 message Room {
   int32 id = 1;
   bool isEmpty = 2;
+
 }
 
 message Doctor {
