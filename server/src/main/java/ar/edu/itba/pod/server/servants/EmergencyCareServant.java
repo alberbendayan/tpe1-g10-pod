@@ -91,7 +91,6 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void startAllAttention(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<Room> freeRooms = roomRepository.getAllFreeRooms();
-        List<AttentionResponse> list = new ArrayList<>();
         for(Room room : freeRooms){
             responseObserver.onNext(attention(Int32Value.of(room.getId()),responseObserver));
         }

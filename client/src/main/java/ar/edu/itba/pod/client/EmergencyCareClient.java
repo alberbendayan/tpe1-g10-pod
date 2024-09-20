@@ -8,6 +8,7 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class EmergencyCareClient {
@@ -29,10 +30,25 @@ public class EmergencyCareClient {
                     }
                     break;
                 case "careAllPatients":
-
+                    Iterator<AttentionResponse> attentionResponses = blockingStub.startAllAttention(Empty.getDefaultInstance());
+                    for (Iterator<AttentionResponse> it = attentionResponses; it.hasNext(); ) {
+                        AttentionResponse a = it.next();
+                        if (a.getPatientLevel() == -2) {
+                            System.out.println("Room #" + a.getRoom() + " remains Occupied");
+                        } else if (a.getPatientLevel() == -1) {
+                            System.out.println("Room #" + a.getRoom() + " remains Free");
+                        } else {
+                            System.out.println("Patient " + a.getPatient() + "(" + a.getPatientLevel() + ") and Doctor " + a.getDoctor() + " (" + a.getDoctorLevel() + ") are now in room #" + a.getRoom());
+                        }
+                    }
                     break;
                 case "dischargePatient":
-
+                    AttentionResponse response = blockingStub.finishAttention(Attention.newBuilder()
+                            .setPatient(System.getProperty("patient"))
+                            .setDoctor(System.getProperty("doctor"))
+                            .setRoom(Integer.parseInt(System.getProperty("room")))
+                            .build());
+                    System.out.println("Patient " + response.getPatient() + "(" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom()+" is now Free");
                     break;
                 default:
                     System.out.println("Invalid action");
