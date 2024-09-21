@@ -23,7 +23,7 @@ public class QueryClient {
             switch (System.getProperty("action")) {
                 case "queryRooms":
                     content.append("Room,Status,Patient,Doctor\n");
-                    Iterator<AttentionResponse> rooms=blockingStub.getRooms(StringValue.of(System.getProperty("outPath")));
+                    Iterator<AttentionResponse> rooms=blockingStub.getRooms(Empty.getDefaultInstance());
                     while(rooms.hasNext()) {
                         AttentionResponse room = rooms.next();
                         if(room.getIsEmpty()){
@@ -36,10 +36,20 @@ public class QueryClient {
 
                     break;
                 case "queryWaitingRoom":
-
+                    content.append("Patient,Level\n");
+                    Iterator<Patient> patients=blockingStub.getPatients(Empty.getDefaultInstance());
+                    while(patients.hasNext()) {
+                        Patient patient = patients.next();
+                        content.append(patient.getName()+","+patient.getLevel()+"\n");
+                    }
                     break;
                 case "queryCares":
-
+                    content.append("Room,Patient,Doctor\n");
+                    Iterator<AttentionResponse> attentionIterator=blockingStub.getAttentions(Empty.getDefaultInstance());
+                    while(attentionIterator.hasNext()) {
+                        AttentionResponse a = attentionIterator.next();
+                        content.append(a.getRoom()+","+a.getPatient()+" ("+ a.getPatientLevel()+"),"+a.getDoctor()+" ("+ a.getDoctorLevel()+")\n");
+                    }
                     break;
                 default:
                     System.out.println("Invalid action");

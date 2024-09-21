@@ -33,4 +33,8 @@ public class AttentionRepository {
     public AttentionResponse getStartedAttention(Integer key) {
         return startedAttentions.get(key);
     }
+
+    public List<AttentionResponse> getFinishedAttentions(){
+        return finishedAttentions;
+    }
 }

@@ -9,6 +9,7 @@ import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
+import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
@@ -31,8 +32,9 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
         this.attentionRepository = attentionRepository;
     }
 
+
     @Override
-    public void getRooms(StringValue request, StreamObserver<AttentionResponse> responseObserver) {
+    public void getRooms(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<Room> rooms= roomRepository.getRooms();
 
         for(Room room: rooms){
@@ -58,12 +60,20 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     }
 
     @Override
-    public void getPatients(StringValue request, StreamObserver<Patient> responseObserver) {
-        super.getPatients(request, responseObserver);
+    public void getPatients(Empty request, StreamObserver<Patient> responseObserver) {
+        List<Patient> list = patientRepository.getPatientsInWaitingRoom();
+        for(Patient p : list){
+            responseObserver.onNext(p);
+        }
+        responseObserver.onCompleted();
     }
 
     @Override
-    public void getAttentions(StringValue request, StreamObserver<Attention> responseObserver) {
-        super.getAttentions(request, responseObserver);
+    public void getAttentions(Empty request, StreamObserver<AttentionResponse> responseObserver) {
+        List<AttentionResponse> list = attentionRepository.getFinishedAttentions();
+        for(AttentionResponse a:list){
+            responseObserver.onNext(a);
+        }
+        responseObserver.onCompleted();
     }
 }

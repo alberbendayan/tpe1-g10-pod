@@ -11,7 +11,7 @@ option java_outer_classname = "QueryClientServiceModel";
 option java_multiple_files = true;
 
 service QueryClientService{
-  rpc GetRooms(google.protobuf.StringValue) returns (stream common.AttentionResponse );
-  rpc GetPatients(google.protobuf.StringValue) returns (stream common.Patient);
-  rpc GetAttentions(google.protobuf.StringValue) returns (stream common.Attention);
+  rpc GetRooms(google.protobuf.Empty) returns (stream common.AttentionResponse );
+  rpc GetPatients(google.protobuf.Empty) returns (stream common.Patient);
+  rpc GetAttentions(google.protobuf.Empty) returns (stream common.AttentionResponse);
 }

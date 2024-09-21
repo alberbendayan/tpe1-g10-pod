@@ -122,4 +122,11 @@ public class PatientRepository {
         return patient;
     }
 
+    public List<Patient> getPatientsInWaitingRoom(){
+        List<Patient> list = new ArrayList<>();
+        for (int i = QTY_LEVELS-1;i>=0;i--){
+            list.addAll(waitingPatients[i]);
+        }
+        return list;
+    }
 }
