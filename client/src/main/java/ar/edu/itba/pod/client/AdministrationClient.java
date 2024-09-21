@@ -22,12 +22,12 @@ public class AdministrationClient {
                     System.out.println("Room #" + room.getId() + " added successfully");
                     break;
                 case "addDoctor":
-                    doctor = blockingStub.addDoctor(RequestDoctorLevel.newBuilder()
+                    RequestDoctorLevel requestDoctorLevel= RequestDoctorLevel.newBuilder()
                             .setName(System.getProperty("doctor"))
                             .setLevel(Integer.parseInt(System.getProperty("level")))
-                            .build()
-                    );
-                    System.out.println("Doctor " + doctor.getName() + "(" + doctor.getLevel() + ") added successfully");
+                            .build();
+                    doctor = blockingStub.addDoctor(requestDoctorLevel);
+                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") added successfully");
                     break;
                 case "setDoctor":
                     Availability availability;

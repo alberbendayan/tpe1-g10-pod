@@ -5,6 +5,7 @@ import ar.edu.itba.pod.grpc.common.Doctor;
 import ar.edu.itba.pod.grpc.common.RequestDoctor;
 import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
 
+import javax.print.Doc;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -111,6 +112,16 @@ public class DoctorRepository {
                 if (doc.getAvailability() == Availability.AVAILABILITY_AVAILABLE) {
                     return doc;
                 }
+            }
+        }
+        return null;
+    }
+
+    public Doctor getDoctorById(String id){
+        for(int i=0;i<5;i++){
+            Doctor doctor=doctors[i].get(id);
+            if(doctor != null){
+                return doctor;
             }
         }
         return null;

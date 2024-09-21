@@ -38,21 +38,21 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     @Override
     public void addDoctor(RequestDoctorLevel request, StreamObserver<Doctor> responseObserver) {
-        Doctor doctor = doctorRepository.addDoctor(request.getDefaultInstanceForType());
+        Doctor doctor = doctorRepository.addDoctor(request);
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
 
     @Override
     public void setDoctor(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
-        Doctor doctor = doctorRepository.changeAvailability(request.getDefaultInstanceForType());
+        Doctor doctor = doctorRepository.changeAvailability(request);
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
 
     @Override
     public void checkDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
-        Doctor doctor = doctorRepository.getAvailability(String.valueOf(request.getDefaultInstanceForType()));
+        Doctor doctor = doctorRepository.getAvailability(String.valueOf(request));
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }

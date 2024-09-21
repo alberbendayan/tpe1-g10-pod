@@ -45,7 +45,7 @@ public class PatientRepository {
         if (patients.containsKey(name)) {
             // TODO: error xq ya existe el patient
         }
-        waitingPatients[level - 1].add(patients.get(name));
+
         Instant now = Instant.now();
         Timestamp timestamp= Timestamp.newBuilder()
                 .setSeconds(now.getEpochSecond())
@@ -59,6 +59,7 @@ public class PatientRepository {
                 .build();
 
         patients.put(name,patient);
+        waitingPatients[level - 1].add(patient);
         return patient;
     }
 
