@@ -38,8 +38,13 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     @Override
     public void addDoctor(RequestDoctorLevel request, StreamObserver<Doctor> responseObserver) {
-        Doctor doctor = doctorRepository.addDoctor(request);
-        responseObserver.onNext(doctor);
+        if(request.getLevel()>5 || request.getLevel()<1){
+            Doctor doctor = Doctor.newBuilder().setLevel(-2).build();
+            responseObserver.onNext(doctor);
+        }else {
+            Doctor doctor = doctorRepository.addDoctor(request);
+            responseObserver.onNext(doctor);
+        }
         responseObserver.onCompleted();
     }
 

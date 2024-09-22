@@ -27,11 +27,14 @@ public class DoctorRepository {
         String name = doctor.getName();
 
         if(level<1 || level>5){
-            // error nivel invalido
+            return null;
         }
         for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
             if(doctors[i].containsKey(name)){
-                // error xq ya existe el dr
+                return Doctor.newBuilder()
+                        .setName(doctor.getName())
+                        .setLevel(-1)
+                        .build();
             }
         }
         Doctor doc = Doctor.newBuilder()
@@ -76,7 +79,7 @@ public class DoctorRepository {
             if(doctors[level-1].containsKey(name)){
                 Doctor old = doctors[level-1].get(name);
                 if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
-                    // error
+                    return null;
                 }else{
                     Doctor doc = Doctor.newBuilder()
                             .setName(name)

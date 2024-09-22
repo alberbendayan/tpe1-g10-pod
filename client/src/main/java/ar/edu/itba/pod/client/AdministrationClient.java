@@ -27,7 +27,14 @@ public class AdministrationClient {
                             .setLevel(Integer.parseInt(System.getProperty("level")))
                             .build();
                     doctor = blockingStub.addDoctor(requestDoctorLevel);
-                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") added successfully");
+                    if(doctor.getLevel() == -2){
+                        System.out.println("Invalid level");
+                    }
+                    else if(doctor.getLevel() == -1){
+                        System.out.println("Doctor " + doctor.getName() + " exists");
+                    }else{
+                        System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") added successfully");
+                    }
                     break;
                 case "setDoctor":
                     Availability availability;
@@ -53,17 +60,25 @@ public class AdministrationClient {
                             .setName(System.getProperty("doctor"))
                             .setAvailability(availability)
                             .build());
-                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    if(doctor == null){
+                        System.out.println("An error has occurred");
+                    }else {
+                        System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    }
                     break;
                 case "checkDoctor":
                     doctor = blockingStub.checkDoctor(StringValue.of(System.getProperty("doctor")));
-                    availabilityMessage = switch (doctor.getAvailability()) {
-                        case AVAILABILITY_AVAILABLE -> "Available";
-                        case AVAILABILITY_UNAVAILABLE -> "Unavailable";
-                        case AVAILABILITY_ATTENDING -> "Attending";
-                        default -> throw new RuntimeException(); //TODO: check exception
-                    };
-                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    if(doctor == null){
+                        System.out.println("An error has occurred");
+                    }else {
+                        availabilityMessage = switch (doctor.getAvailability()) {
+                            case AVAILABILITY_AVAILABLE -> "Available";
+                            case AVAILABILITY_UNAVAILABLE -> "Unavailable";
+                            case AVAILABILITY_ATTENDING -> "Attending";
+                            default -> throw new RuntimeException(); //TODO: check exception
+                        };
+                        System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    }
                     break;
                 default:
                     System.out.println("Invalid action");
