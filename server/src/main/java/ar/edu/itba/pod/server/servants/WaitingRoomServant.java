@@ -28,9 +28,7 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
 
     @Override
     public void addPatient(RequestPatient request, StreamObserver<Patient> responseObserver) {
-        System.out.println("HOlis");
         Patient patient = patientRepository.addPatient(request);
-        System.out.println("Chauchis");
         responseObserver.onNext(patient);
         responseObserver.onCompleted();
     }
@@ -44,6 +42,8 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
 
     @Override
     public void checkPatient(StringValue request, StreamObserver<PatientTime> responseObserver) {
-        patientRepository.checkPatient(request.getValue());
+        PatientTime patientTime = patientRepository.checkPatient(request.getValue());
+        responseObserver.onNext(patientTime);
+        responseObserver.onCompleted();
     }
 }

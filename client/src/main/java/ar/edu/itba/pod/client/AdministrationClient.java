@@ -53,7 +53,7 @@ public class AdministrationClient {
                             .setName(System.getProperty("doctor"))
                             .setAvailability(availability)
                             .build());
-                    System.out.println("Doctor " + doctor.getName() + "(" + doctor.getLevel() + ") is " + availabilityMessage);
+                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
                     break;
                 case "checkDoctor":
                     doctor = blockingStub.checkDoctor(StringValue.of(System.getProperty("doctor")));
@@ -63,7 +63,7 @@ public class AdministrationClient {
                         case AVAILABILITY_ATTENDING -> "Attending";
                         default -> throw new RuntimeException(); //TODO: check exception
                     };
-                    System.out.println("Doctor " + doctor.getName() + "(" + doctor.getLevel() + ") is " + availabilityMessage);
+                    System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
                     break;
                 default:
                     System.out.println("Invalid action");

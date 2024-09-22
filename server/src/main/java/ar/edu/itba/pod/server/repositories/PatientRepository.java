@@ -6,6 +6,7 @@ import ar.edu.itba.pod.grpc.common.RequestPatient;
 import ar.edu.itba.pod.grpc.common.State;
 import com.google.protobuf.Timestamp;
 
+import java.security.spec.RSAOtherPrimeInfo;
 import java.time.Instant;
 import java.util.*;
 
@@ -90,7 +91,7 @@ public class PatientRepository {
             for (Patient p : waitingPatients[i]) {
                 if (p.getName().equals(name)) {
                     return PatientTime.newBuilder()
-                            .setPatient(patients.get(p))
+                            .setPatient(patients.get(name))
                             .setPatientsAhead(counter)
                             .build();
                 }

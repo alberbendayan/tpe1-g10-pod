@@ -38,7 +38,7 @@ public class WaitingRoomClient {
                     break;
                 case "checkPatient":
                     PatientTime patientTime = blockingStub.checkPatient(StringValue.of(System.getProperty("patient")));
-                    System.out.println("Patient " + patientTime.getPatient().getName() + "(" + patientTime.getPatient().getLevel() + ") is in the waiting room with " + patientTime.getPatientsAhead() + " patients ahead");
+                    System.out.println("Patient " + patientTime.getPatient().getName() + " (" + patientTime.getPatient().getLevel() + ") is in the waiting room with " + patientTime.getPatientsAhead() + " patients ahead");
                     break;
                 default:
                     System.out.println("Invalid action");

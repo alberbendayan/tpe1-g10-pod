@@ -26,7 +26,7 @@ public class EmergencyCareClient {
                     }else if(attentionResponse.getPatientLevel() == -1){
                         System.out.println("Room #"+attentionResponse.getRoom()+" remains Free");
                     }else {
-                        System.out.println("Patient " + attentionResponse.getPatient() + "(" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
+                        System.out.println("Patient " + attentionResponse.getPatient() + " (" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
                     }
                     break;
                 case "careAllPatients":
@@ -38,7 +38,7 @@ public class EmergencyCareClient {
                         } else if (a.getPatientLevel() == -1) {
                             System.out.println("Room #" + a.getRoom() + " remains Free");
                         } else {
-                            System.out.println("Patient " + a.getPatient() + "(" + a.getPatientLevel() + ") and Doctor " + a.getDoctor() + " (" + a.getDoctorLevel() + ") are now in room #" + a.getRoom());
+                            System.out.println("Patient " + a.getPatient() + " (" + a.getPatientLevel() + ") and Doctor " + a.getDoctor() + " (" + a.getDoctorLevel() + ") are now in room #" + a.getRoom());
                         }
                     }
                     break;
@@ -48,7 +48,7 @@ public class EmergencyCareClient {
                             .setDoctor(System.getProperty("doctor"))
                             .setRoom(Integer.parseInt(System.getProperty("room")))
                             .build());
-                    System.out.println("Patient " + response.getPatient() + "(" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom()+" is now Free");
+                    System.out.println("Patient " + response.getPatient() + " (" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom()+" is now Free");
                     break;
                 default:
                     System.out.println("Invalid action");

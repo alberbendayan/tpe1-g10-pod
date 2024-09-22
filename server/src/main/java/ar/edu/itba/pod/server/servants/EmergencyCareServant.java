@@ -46,7 +46,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     }
 
     private AttentionResponse attention(Int32Value request, StreamObserver<AttentionResponse> responseObserver){
-        int roomNumber = Integer.valueOf(String.valueOf(request));
+        int roomNumber = request.getValue();
         if(!roomRepository.isFree(roomNumber)){
             return exitRoomOccupied(roomNumber,responseObserver);
         }
@@ -91,8 +91,8 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     @Override
     public void startAllAttention(Empty request, StreamObserver<AttentionResponse> responseObserver) {
-        List<Room> freeRooms = roomRepository.getAllFreeRooms();
-        for(Room room : freeRooms){
+        List<Room> rooms = roomRepository.getRooms();
+        for(Room room : rooms){
             responseObserver.onNext(attention(Int32Value.of(room.getId()),responseObserver));
         }
         responseObserver.onCompleted();
