@@ -22,18 +22,15 @@ public class AdministrationClient {
                     System.out.println("Room #" + room.getId() + " added successfully");
                     break;
                 case "addDoctor":
-                    RequestDoctorLevel requestDoctorLevel= RequestDoctorLevel.newBuilder()
-                            .setName(System.getProperty("doctor"))
-                            .setLevel(Integer.parseInt(System.getProperty("level")))
-                            .build();
-                    doctor = blockingStub.addDoctor(requestDoctorLevel);
-                    if(doctor.getLevel() == -2){
-                        System.out.println("Invalid level");
-                    }
-                    else if(doctor.getLevel() == -1){
-                        System.out.println("Doctor " + doctor.getName() + " exists");
-                    }else{
+                    try {
+                        RequestDoctorLevel requestDoctorLevel = RequestDoctorLevel.newBuilder()
+                                .setName(System.getProperty("doctor"))
+                                .setLevel(Integer.parseInt(System.getProperty("level")))
+                                .build();
+                        doctor = blockingStub.addDoctor(requestDoctorLevel);
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") added successfully");
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "setDoctor":
@@ -46,7 +43,6 @@ public class AdministrationClient {
                         case "unavailable":
                             availability = Availability.AVAILABILITY_UNAVAILABLE;
                             availabilityMessage = "Unavailable";
-
                             break;
                         case "attending":
                             availability = Availability.AVAILABILITY_ATTENDING;
@@ -67,10 +63,9 @@ public class AdministrationClient {
                     }
                     break;
                 case "checkDoctor":
-                    doctor = blockingStub.checkDoctor(StringValue.of(System.getProperty("doctor")));
-                    if(doctor == null){
-                        System.out.println("An error has occurred");
-                    }else {
+                    try {
+                        MyString m = MyString.newBuilder().setName(System.getProperty("doctor")).build();
+                        doctor = blockingStub.checkDoctor(m);
                         availabilityMessage = switch (doctor.getAvailability()) {
                             case AVAILABILITY_AVAILABLE -> "Available";
                             case AVAILABILITY_UNAVAILABLE -> "Unavailable";
@@ -78,6 +73,8 @@ public class AdministrationClient {
                             default -> throw new RuntimeException(); //TODO: check exception
                         };
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    } catch (Exception e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 default:

@@ -2,16 +2,14 @@ package ar.edu.itba.pod.server.servants;
 
 
 import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
-import ar.edu.itba.pod.grpc.common.RequestDoctor;
-import ar.edu.itba.pod.grpc.common.RequestDoctorLevel;
-import ar.edu.itba.pod.grpc.common.Room;
+import ar.edu.itba.pod.grpc.common.*;
 import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
 import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
-import ar.edu.itba.pod.grpc.common.Doctor;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class AdministrationServant extends AdministrationServiceGrpc.AdministrationServiceImplBase {
@@ -39,25 +37,35 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     @Override
     public void addDoctor(RequestDoctorLevel request, StreamObserver<Doctor> responseObserver) {
         if(request.getLevel()>5 || request.getLevel()<1){
-            Doctor doctor = Doctor.newBuilder().setLevel(-2).build();
-            responseObserver.onNext(doctor);
-        }else {
-            Doctor doctor = doctorRepository.addDoctor(request);
-            responseObserver.onNext(doctor);
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid level").asRuntimeException());
         }
+        Doctor doctor = doctorRepository.addDoctor(request);
+        if(doctor.getLevel() == -1){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor "+request.getName()+" already exists").asRuntimeException());
+        }
+        responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
 
     @Override
     public void setDoctor(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.changeAvailability(request);
+        if(doctor.getLevel() == -1){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor "+request.getName()+" is attending").asRuntimeException());
+        }else if(doctor.getLevel() == -2){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
+        }
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void checkDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
-        Doctor doctor = doctorRepository.getAvailability(String.valueOf(request));
+    public void checkDoctor(MyString request, StreamObserver<Doctor> responseObserver) {
+        System.out.println(request.getName());
+        Doctor doctor = doctorRepository.getAvailability(request.getName());
+        if(doctor.getLevel() == -2){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
+        }
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }

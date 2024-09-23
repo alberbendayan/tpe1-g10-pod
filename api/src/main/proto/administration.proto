@@ -14,7 +14,7 @@ service AdministrationService{
   rpc AddRoom(google.protobuf.Empty) returns (common.Room);
   rpc AddDoctor(common.RequestDoctorLevel) returns (common.Doctor);
   rpc SetDoctor(common.RequestDoctor) returns (common.Doctor);
-  rpc CheckDoctor(google.protobuf.StringValue) returns (common.Doctor);
+  rpc CheckDoctor(common.MyString) returns (common.Doctor);
 }
 
 

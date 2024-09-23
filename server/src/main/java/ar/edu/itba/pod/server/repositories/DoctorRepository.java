@@ -49,13 +49,15 @@ public class DoctorRepository {
     }
 
     public Doctor changeAvailability(RequestDoctor doctor){
-
         String name = doctor.getName();
         for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
             if(doctors[i].containsKey(name)){
                 Doctor old = doctors[i].get(name);
                 if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
-                    // error
+                    return Doctor.newBuilder()
+                            .setName(doctor.getName())
+                            .setLevel(-1)
+                            .build();
                 }else{
                     Doctor doc = Doctor.newBuilder()
                             .setName(name)
@@ -69,8 +71,9 @@ public class DoctorRepository {
                 }
             }
         }
-        return null;
-        // no encontre nada falla
+        return Doctor.newBuilder()
+                .setLevel(-2)
+                .build();
     }
 
     public Doctor changeAvailability(RequestDoctor doctor,int level){
@@ -92,20 +95,20 @@ public class DoctorRepository {
                     return doc;
                 }
             }
-
-        return null;
-        // no encontre nada falla
+        return Doctor.newBuilder()
+                .setLevel(-2)
+                .build();
     }
 
     public Doctor getAvailability(String name){
-
-        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
+        System.out.println("El dr es:" + name);
+        for(int i = 0; i<QTY_LEVELS_DOCTORS;i++){
             if(doctors[i].containsKey(name)){
                 return doctors[i].get(name);
             }
         }
-        return null;
-        // no encontre nada falla
+        return Doctor.newBuilder().setLevel(-2).build();
+
     }
 
     public Doctor getDoctorToPatient (int level){
@@ -120,11 +123,10 @@ public class DoctorRepository {
         return null;
     }
 
-    public Doctor getDoctorById(String id){
-        for(int i=0;i<5;i++){
-            Doctor doctor=doctors[i].get(id);
-            if(doctor != null){
-                return doctor;
+    public Doctor getDoctorByName(String name){
+        for(int i = 0; i<QTY_LEVELS_DOCTORS;i++){
+            if(doctors[i].containsKey(name)){
+                return doctors[i].get(name);
             }
         }
         return null;
