@@ -86,19 +86,22 @@ public class PatientRepository {
     }
 
     public PatientTime checkPatient(String name) {
+        Patient patient = patients.get(name);
         int counter = 0;
-        for (int i = QTY_LEVELS - 1; i >= 0; i--) {
-            for (Patient p : waitingPatients[i]) {
-                if (p.getName().equals(name)) {
-                    return PatientTime.newBuilder()
-                            .setPatient(patients.get(name))
-                            .setPatientsAhead(counter)
-                            .build();
-                }
-                counter++;
-            }
+        int i;
+        for (i = QTY_LEVELS - 1; i >= patient.getLevel(); i--) {
+            counter+=waitingPatients[i].size();
         }
-        return null; //TODO ver si aca tirar error code
+        for (Patient p : waitingPatients[patient.getLevel()-1]) {
+            if (p.getName().equals(name)) {
+                return PatientTime.newBuilder()
+                        .setPatient(patients.get(name))
+                        .setPatientsAhead(counter)
+                        .build();
+            }
+            counter++;
+        }
+        return null;
     }
 
     public Patient getMostUrgentPatient(){

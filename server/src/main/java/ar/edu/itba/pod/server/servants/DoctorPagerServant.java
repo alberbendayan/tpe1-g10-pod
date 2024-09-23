@@ -34,7 +34,7 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
         String doctorId = request.getValue();
         //TODO: tiene que fallar si ya estaba
         subscribers.computeIfAbsent(doctorId, k -> ConcurrentHashMap.newKeySet()).add(responseObserver);
-        Doctor doctor = doctorRepository.getDoctorById(doctorId);
+        Doctor doctor = doctorRepository.getDoctorByName(doctorId);
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
@@ -48,7 +48,7 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
             doctorSubscribers.remove(responseObserver);
         }
 
-        Doctor doctor = doctorRepository.getDoctorById(doctorId);
+        Doctor doctor = doctorRepository.getDoctorByName(doctorId);
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
