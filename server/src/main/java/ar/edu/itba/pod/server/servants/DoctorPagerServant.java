@@ -9,12 +9,18 @@ import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
 
-public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceImplBase{
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-    private RoomRepository roomRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private AttentionRepository attentionRepository;
+public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceImplBase {
+
+    private final RoomRepository roomRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
+    private final AttentionRepository attentionRepository;
+
+    private final Map<String, Set<StreamObserver<Doctor>>> subscribers = new ConcurrentHashMap<>();
 
     public DoctorPagerServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
         this.roomRepository = roomRepository;
@@ -25,11 +31,35 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
 
     @Override
     public void registerDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
-        super.registerDoctor(request, responseObserver);
+        String doctorId = request.getValue();
+        //TODO: tiene que fallar si ya estaba
+        subscribers.computeIfAbsent(doctorId, k -> ConcurrentHashMap.newKeySet()).add(responseObserver);
+        Doctor doctor = doctorRepository.getDoctorById(doctorId);
+        responseObserver.onNext(doctor);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void unsuscribeDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
-        super.unsuscribeDoctor(request, responseObserver);
+        String doctorId = request.getValue();
+
+        Set<StreamObserver<Doctor>> doctorSubscribers = subscribers.get(doctorId);
+        if (doctorSubscribers != null) {
+            doctorSubscribers.remove(responseObserver);
+        }
+
+        Doctor doctor = doctorRepository.getDoctorById(doctorId);
+        responseObserver.onNext(doctor);
+        responseObserver.onCompleted();
+    }
+
+    public void notifyDoctorChange(String doctorId, Doctor updatedDoctor) {
+        Set<StreamObserver<Doctor>> doctorSubscribers = subscribers.get(doctorId);
+
+        if (doctorSubscribers != null) {
+            for (StreamObserver<Doctor> observer : doctorSubscribers) {
+                observer.onNext(updatedDoctor);
+            }
+        }
     }
 }
