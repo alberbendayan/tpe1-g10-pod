@@ -60,9 +60,8 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     }
 
     @Override
-    public void checkDoctor(MyString request, StreamObserver<Doctor> responseObserver) {
-        System.out.println(request.getName());
-        Doctor doctor = doctorRepository.getAvailability(request.getName());
+    public void checkDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
+        Doctor doctor = doctorRepository.getAvailability(request.getValue());
         if(doctor.getLevel() == -2){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
         }

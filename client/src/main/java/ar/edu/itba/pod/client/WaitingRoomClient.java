@@ -21,24 +21,35 @@ public class WaitingRoomClient {
             Patient patient = null;
             switch (System.getProperty("action")) {
                 case "addPatient":
-                    patient = blockingStub.addPatient(RequestPatient.newBuilder()
-                            .setName(System.getProperty("patient"))
-                            .setLevel(Integer.parseInt(System.getProperty("level")))
-                            .build());
-                    System.out.println("Patient " + patient.getName() + " (" + patient.getLevel() + ") is in the waiting room");
+                    try {
+                        patient = blockingStub.addPatient(RequestPatient.newBuilder()
+                                .setName(System.getProperty("patient"))
+                                .setLevel(Integer.parseInt(System.getProperty("level")))
+                                .build());
+                        System.out.println("Patient " + patient.getName() + " (" + patient.getLevel() + ") is in the waiting room");
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "updateLevel":
-                    patient = blockingStub.updateLevel(RequestPatient.newBuilder()
-                            .setName(System.getProperty("patient"))
-                            .setLevel(Integer.parseInt(System.getProperty("level")))
-                            .build()
-                    );
-                    System.out.println("Patient " + patient.getName() + " (" + patient.getLevel() + ") is in the waiting room");
-
+                    try {
+                        patient = blockingStub.updateLevel(RequestPatient.newBuilder()
+                                .setName(System.getProperty("patient"))
+                                .setLevel(Integer.parseInt(System.getProperty("level")))
+                                .build()
+                        );
+                        System.out.println("Patient " + patient.getName() + " (" + patient.getLevel() + ") is in the waiting room");
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "checkPatient":
-                    PatientTime patientTime = blockingStub.checkPatient(StringValue.of(System.getProperty("patient")));
-                    System.out.println("Patient " + patientTime.getPatient().getName() + " (" + patientTime.getPatient().getLevel() + ") is in the waiting room with " + patientTime.getPatientsAhead() + " patients ahead");
+                    try{
+                        PatientTime patientTime = blockingStub.checkPatient(StringValue.of(System.getProperty("patient")));
+                        System.out.println("Patient " + patientTime.getPatient().getName() + " (" + patientTime.getPatient().getLevel() + ") is in the waiting room with " + patientTime.getPatientsAhead() + " patients ahead");
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 default:
                     System.out.println("Invalid action");

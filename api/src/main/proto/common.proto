@@ -31,9 +31,6 @@ message Patient {
   google.protobuf.Timestamp time = 4;
 }
 
-message MyString{
-  string name = 1;
-}
 
 message RequestPatient {
   string name = 1;

@@ -41,10 +41,10 @@ public class PatientRepository {
         String name = requestPatient.getName();
 
         if (level < 1 || level > 5) {
-            //TODO: error
+            return Patient.newBuilder().setLevel(-1).build();
         }
         if (patients.containsKey(name)) {
-            // TODO: error xq ya existe el patient
+            return Patient.newBuilder().setLevel(-2).build();
         }
 
         Instant now = Instant.now();
@@ -82,7 +82,7 @@ public class PatientRepository {
                 }
             }
         }
-        return null; //TODO ver si aca tirar error code
+        return Patient.newBuilder().setLevel(-2).build();
     }
 
     public PatientTime checkPatient(String name) {

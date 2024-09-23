@@ -64,8 +64,7 @@ public class AdministrationClient {
                     break;
                 case "checkDoctor":
                     try {
-                        MyString m = MyString.newBuilder().setName(System.getProperty("doctor")).build();
-                        doctor = blockingStub.checkDoctor(m);
+                        doctor = blockingStub.checkDoctor(StringValue.of(System.getProperty("doctor")));
                         availabilityMessage = switch (doctor.getAvailability()) {
                             case AVAILABILITY_AVAILABLE -> "Available";
                             case AVAILABILITY_UNAVAILABLE -> "Unavailable";
