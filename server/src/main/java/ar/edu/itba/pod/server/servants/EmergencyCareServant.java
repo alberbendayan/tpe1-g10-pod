@@ -8,6 +8,7 @@ import ar.edu.itba.pod.server.repositories.PatientRepository;
 import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.checkerframework.checker.units.qual.A;
 
@@ -83,7 +84,9 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse response = attention(request,responseObserver);
-
+        if(response.getPatientLevel() < 0){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
+        }
         attentionRepository.startAttention(response);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -102,7 +105,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     public void finishAttention(Attention request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse attentionResponse = attentionRepository.existAttention(request);
         if(attentionResponse == null){
-            // error
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
         }
         responseObserver.onNext(attentionRepository.finishAttention(attentionResponse));
         responseObserver.onCompleted();

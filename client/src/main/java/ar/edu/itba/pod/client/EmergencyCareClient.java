@@ -20,16 +20,15 @@ public class EmergencyCareClient {
 
             switch (System.getProperty("action")) {
                 case "carePatient":
-                    AttentionResponse attentionResponse = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
-                    if(attentionResponse.getPatientLevel() == -2){
-                        System.out.println("Room #"+attentionResponse.getRoom()+" remains Occupied");
-                    }else if(attentionResponse.getPatientLevel() == -1){
-                        System.out.println("Room #"+attentionResponse.getRoom()+" remains Free");
-                    }else {
+                    try {
+                        AttentionResponse attentionResponse = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
                         System.out.println("Patient " + attentionResponse.getPatient() + " (" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "careAllPatients":
+                    // TODO: VER QUE ONDA LA EXCEPTION CON EL ITERADOR
                     Iterator<AttentionResponse> attentionResponses = blockingStub.startAllAttention(Empty.getDefaultInstance());
                     for (Iterator<AttentionResponse> it = attentionResponses; it.hasNext(); ) {
                         AttentionResponse a = it.next();
@@ -43,12 +42,16 @@ public class EmergencyCareClient {
                     }
                     break;
                 case "dischargePatient":
-                    AttentionResponse response = blockingStub.finishAttention(Attention.newBuilder()
-                            .setPatient(System.getProperty("patient"))
-                            .setDoctor(System.getProperty("doctor"))
-                            .setRoom(Integer.parseInt(System.getProperty("room")))
-                            .build());
-                    System.out.println("Patient " + response.getPatient() + " (" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom()+" is now Free");
+                    try {
+                        AttentionResponse response = blockingStub.finishAttention(Attention.newBuilder()
+                                .setPatient(System.getProperty("patient"))
+                                .setDoctor(System.getProperty("doctor"))
+                                .setRoom(Integer.parseInt(System.getProperty("room")))
+                                .build());
+                        System.out.println("Patient " + response.getPatient() + " (" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom() + " is now Free");
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 default:
                     System.out.println("Invalid action");
