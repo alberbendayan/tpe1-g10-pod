@@ -42,4 +42,14 @@ public class AttentionRepository {
     public List<AttentionResponse> getFinishedAttentions(){
         return finishedAttentions;
     }
+
+    public List<AttentionResponse> getFinishedAttentionsByRoom(int room){
+        List<AttentionResponse> list = new ArrayList<>();
+        for(AttentionResponse a: finishedAttentions){
+            if(a.getRoom() == room){
+                list.add(a);
+            }
+        }
+        return list;
+    }
 }

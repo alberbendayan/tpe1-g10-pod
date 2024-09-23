@@ -83,4 +83,16 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
         }
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getAttentionsRoom(Int32Value room, StreamObserver<AttentionResponse> responseObserver) {
+        List<AttentionResponse> list = attentionRepository.getFinishedAttentionsByRoom(room.getValue());
+        if(list.isEmpty()){
+            responseObserver.onError(Status.NOT_FOUND.withDescription("There are no attentions").asRuntimeException());
+        }
+        for(AttentionResponse a:list){
+            responseObserver.onNext(a);
+        }
+        responseObserver.onCompleted();
+    }
 }

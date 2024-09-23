@@ -4,6 +4,7 @@ import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
 import ar.edu.itba.pod.grpc.common.*;
 import ar.edu.itba.pod.grpc.queryClientService.QueryClientServiceGrpc;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 
@@ -51,8 +52,23 @@ public class QueryClient {
                     break;
                 case "queryCares":
                     try {
+                        String roomProperty = System.getProperty("room");
+                        Integer room = null;
+                        if (roomProperty != null) {
+                            try {
+                                room = Integer.parseInt(roomProperty);
+                            } catch (NumberFormatException e) {
+                                System.out.println("El parámetro 'room' no es un número válido.");
+                            }
+                        }
+
                         content.append("Room,Patient,Doctor\n");
-                        Iterator<AttentionResponse> attentionIterator = blockingStub.getAttentions(Empty.getDefaultInstance());
+                        Iterator<AttentionResponse> attentionIterator;
+                        if(room !=null){
+                            attentionIterator= blockingStub.getAttentionsRoom(Int32Value.of(room));
+                        }else {
+                            attentionIterator = blockingStub.getAttentions(Empty.getDefaultInstance());
+                        }
                         while (attentionIterator.hasNext()) {
                             AttentionResponse a = attentionIterator.next();
                             content.append(a.getRoom() + "," + a.getPatient() + " (" + a.getPatientLevel() + ")," + a.getDoctor() + " (" + a.getDoctorLevel() + ")\n");
