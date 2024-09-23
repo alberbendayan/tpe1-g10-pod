@@ -16,14 +16,10 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     private final RoomRepository roomRepository;
     private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
-    private AttentionRepository attentionRepository;
 
-    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository) {
         this.roomRepository = roomRepository;
         this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.attentionRepository = attentionRepository;
     }
 
     @Override

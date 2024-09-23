@@ -39,6 +39,18 @@ public class RoomRepository {
         return room;
     }
 
+    public Room setFree(int number){
+        if(isFree(number)){
+            return null;
+        }
+        Room room = Room.newBuilder()
+                .setId(number)
+                .setIsEmpty(true)
+                .build();
+        rooms.set(number-1,room);
+        return room;
+    }
+
     public List<Room> getAllFreeRooms(){
         List<Room> ret = new ArrayList<>();
         for(Room room:rooms){

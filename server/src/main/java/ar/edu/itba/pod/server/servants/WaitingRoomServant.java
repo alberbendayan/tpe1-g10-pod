@@ -15,16 +15,9 @@ import io.grpc.stub.StreamObserver;
 
 public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServiceImplBase {
 
-    private RoomRepository roomRepository;
-    private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
-    private AttentionRepository attentionRepository;
-
-    public WaitingRoomServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
-        this.roomRepository = roomRepository;
-        this.doctorRepository = doctorRepository;
+    public WaitingRoomServant(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
-        this.attentionRepository = attentionRepository;
     }
 
     @Override

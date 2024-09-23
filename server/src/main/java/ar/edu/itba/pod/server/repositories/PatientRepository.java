@@ -12,26 +12,26 @@ import java.util.*;
 
 public class PatientRepository {
 
-    private Queue<Patient>[] waitingPatients;
+    private SortedSet<Patient>[] waitingPatients;
 
     private Map<String,Patient> patients;
     private final int QTY_LEVELS = 5;
 
     public PatientRepository() {
-        waitingPatients = new PriorityQueue[QTY_LEVELS];
+        waitingPatients = new SortedSet[QTY_LEVELS];
         patients = new LinkedHashMap<>();
 
         for (int i = 0; i < QTY_LEVELS; i++) {
-            waitingPatients[i] = new PriorityQueue<>(new Comparator<Patient>() {
-                @Override
-                public int compare(Patient o1, Patient o2) {
-                    Timestamp t1 = o1.getTime();
-                    Timestamp t2 = o2.getTime();
-                    if(t1.getSeconds() == t2.getSeconds()){
-                        return t1.getNanos()-t2.getNanos();
+            waitingPatients[i] = new TreeSet<>((o1, o2) -> {
+                Timestamp t1 = o1.getTime();
+                Timestamp t2 = o2.getTime();
+                if (t1.getSeconds() == t2.getSeconds()) {
+                    if (t1.getNanos() == t2.getNanos()) {
+                        return o1.getName().compareTo(o2.getName());
                     }
-                    return Long.compare(t1.getSeconds(), t2.getSeconds());
+                    return t1.getNanos() - t2.getNanos();
                 }
+                return Long.compare(t1.getSeconds(), t2.getSeconds());
             });
         }
     }
@@ -104,7 +104,7 @@ public class PatientRepository {
     public Patient getMostUrgentPatient(){
         for(int i = QTY_LEVELS-1;i>=0;i--){
             if(!waitingPatients[i].isEmpty()){
-                return waitingPatients[i].poll();
+                return waitingPatients[i].iterator().next();
             }
         }
         return null;
@@ -122,6 +122,12 @@ public class PatientRepository {
         patients.remove(name);
         patients.put(name,patient);
         return patient;
+    }
+
+    public Patient getPatient(String name){
+        if(patients.containsKey(name))
+            return patients.get(name);
+        return null;
     }
 
     public List<Patient> getPatientsInWaitingRoom(){

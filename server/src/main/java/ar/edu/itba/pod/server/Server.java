@@ -25,10 +25,10 @@ public class Server {
         int port = 50052;
         io.grpc.Server server = ServerBuilder.forPort(port)
                 .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
-                .addService(new AdministrationServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
-                .addService(new QueryClientServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new AdministrationServant(roomRepository, doctorRepository))
+                .addService(new QueryClientServant(roomRepository, patientRepository, attentionRepository))
                 .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
-                .addService(new WaitingRoomServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new WaitingRoomServant(patientRepository))
                 .build();
         server.start();
         logger.info("Server started, listening on " + port);

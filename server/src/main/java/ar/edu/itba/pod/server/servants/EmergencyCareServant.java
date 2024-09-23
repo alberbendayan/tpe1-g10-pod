@@ -85,7 +85,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse response = attention(request,responseObserver);
-        if(response.getPatientLevel() < 0){
+        if(response.getStatus() < 0){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
         }
         attentionRepository.startAttention(response);
@@ -105,9 +105,16 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void finishAttention(Attention request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse attentionResponse = attentionRepository.existAttention(request);
-        if(attentionResponse == null){
+        if(attentionResponse == null || doctorRepository.getDoctorByName(request.getDoctor()) == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
         }
+        roomRepository.setFree(attentionResponse.getRoom());
+        doctorRepository.changeAvailability(RequestDoctor.newBuilder()
+                .setName(request.getDoctor())
+                .setAvailability(Availability.AVAILABILITY_AVAILABLE)
+                .build());
+        Patient patient = patientRepository.getPatient(request.getPatient());
+        patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_FINISHED);
         responseObserver.onNext(attentionRepository.finishAttention(attentionResponse));
         responseObserver.onCompleted();
     }

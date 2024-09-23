@@ -18,47 +18,60 @@ public class QueryClient {
 
         try {
             QueryClientServiceGrpc.QueryClientServiceBlockingStub blockingStub = QueryClientServiceGrpc.newBlockingStub(channel);
-            String path=System.getProperty("outPath");
-            StringBuilder content= new StringBuilder();
+            String path = System.getProperty("outPath");
+            StringBuilder content = new StringBuilder();
             switch (System.getProperty("action")) {
                 case "queryRooms":
-                    content.append("Room,Status,Patient,Doctor\n");
-                    Iterator<AttentionResponse> rooms=blockingStub.getRooms(Empty.getDefaultInstance());
-                    while(rooms.hasNext()) {
-                        AttentionResponse room = rooms.next();
-                        if(room.getIsEmpty()){
-                            content.append(room.getRoom()+",Free,,\n");
+                    try {
+                        content.append("Room,Status,Patient,Doctor\n");
+                        Iterator<AttentionResponse> rooms = blockingStub.getRooms(Empty.getDefaultInstance());
+                        while (rooms.hasNext()) {
+                            AttentionResponse room = rooms.next();
+                            if (room.getIsEmpty()) {
+                                content.append(room.getRoom() + ",Free,,\n");
+                            } else {
+                                content.append(room.getRoom() + ",Occupied," + room.getPatient() + " (" + room.getPatientLevel() + ")," + room.getDoctor() + " (" + room.getDoctorLevel() + ")\n");
+                            }
                         }
-                        else{
-                            content.append(room.getRoom()+",Occupied,"+room.getPatient()+" ("+room.getPatientLevel()+"),"+room.getDoctor()+" ("+room.getDoctorLevel()+")\n");
-                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
-
                     break;
                 case "queryWaitingRoom":
-                    content.append("Patient,Level\n");
-                    Iterator<Patient> patients=blockingStub.getPatients(Empty.getDefaultInstance());
-                    while(patients.hasNext()) {
-                        Patient patient = patients.next();
-                        content.append(patient.getName()+","+patient.getLevel()+"\n");
+                    try {
+                        content.append("Patient,Level\n");
+                        Iterator<Patient> patients = blockingStub.getPatients(Empty.getDefaultInstance());
+                        while (patients.hasNext()) {
+                            Patient patient = patients.next();
+                            content.append(patient.getName() + "," + patient.getLevel() + "\n");
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "queryCares":
-                    content.append("Room,Patient,Doctor\n");
-                    Iterator<AttentionResponse> attentionIterator=blockingStub.getAttentions(Empty.getDefaultInstance());
-                    while(attentionIterator.hasNext()) {
-                        AttentionResponse a = attentionIterator.next();
-                        content.append(a.getRoom()+","+a.getPatient()+" ("+ a.getPatientLevel()+"),"+a.getDoctor()+" ("+ a.getDoctorLevel()+")\n");
+                    try {
+                        content.append("Room,Patient,Doctor\n");
+                        Iterator<AttentionResponse> attentionIterator = blockingStub.getAttentions(Empty.getDefaultInstance());
+                        while (attentionIterator.hasNext()) {
+                            AttentionResponse a = attentionIterator.next();
+                            content.append(a.getRoom() + "," + a.getPatient() + " (" + a.getPatientLevel() + ")," + a.getDoctor() + " (" + a.getDoctorLevel() + ")\n");
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 default:
                     System.out.println("Invalid action");
                     break;
             }
-            try (FileWriter escritor = new FileWriter(path)) {
-                escritor.write(content.toString());
-            } catch (IOException e) {
-                System.out.println("Error: creating CSV.");}
+            if (!content.isEmpty()) {
+                try (FileWriter escritor = new FileWriter(path)) {
+                    escritor.write(content.toString());
+                } catch (IOException e) {
+                    System.out.println("Error: creating CSV.");
+                }
+            }
         } finally {
             channel.shutdown().awaitTermination(10, TimeUnit.SECONDS);
         }

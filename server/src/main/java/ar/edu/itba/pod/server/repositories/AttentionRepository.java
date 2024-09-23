@@ -25,7 +25,12 @@ public class AttentionRepository {
     }
 
     public AttentionResponse finishAttention (AttentionResponse attentionResponse){
-        startedAttentions.remove(attentionResponse);
+        if(!startedAttentions.containsKey(attentionResponse.getRoom()) ||
+                !startedAttentions.get(attentionResponse.getRoom()).getDoctor().equals(attentionResponse.getDoctor())
+        ){
+            return null;
+        }
+        startedAttentions.remove(attentionResponse.getRoom());
         finishedAttentions.add(attentionResponse);
         return attentionResponse;
     }

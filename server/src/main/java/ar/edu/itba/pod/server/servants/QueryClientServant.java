@@ -12,6 +12,7 @@ import ar.edu.itba.pod.server.repositories.RoomRepository;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Collection;
@@ -21,13 +22,11 @@ import java.util.List;
 public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServiceImplBase{
 
     private RoomRepository roomRepository;
-    private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private AttentionRepository attentionRepository;
 
-    public QueryClientServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+    public QueryClientServant(RoomRepository roomRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
         this.roomRepository = roomRepository;
-        this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.attentionRepository = attentionRepository;
     }
@@ -36,7 +35,9 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     @Override
     public void getRooms(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<Room> rooms= roomRepository.getRooms();
-
+        if(rooms.isEmpty()){
+            responseObserver.onError(Status.NOT_FOUND.withDescription("There are no rooms").asRuntimeException());
+        }
         for(Room room: rooms){
             if(room.getIsEmpty()){
                 responseObserver.onNext( AttentionResponse.newBuilder()
@@ -62,6 +63,9 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     @Override
     public void getPatients(Empty request, StreamObserver<Patient> responseObserver) {
         List<Patient> list = patientRepository.getPatientsInWaitingRoom();
+        if(list.isEmpty()){
+            responseObserver.onError(Status.NOT_FOUND.withDescription("There are no patients").asRuntimeException());
+        }
         for(Patient p : list){
             responseObserver.onNext(p);
         }
@@ -71,6 +75,9 @@ public class QueryClientServant extends QueryClientServiceGrpc.QueryClientServic
     @Override
     public void getAttentions(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<AttentionResponse> list = attentionRepository.getFinishedAttentions();
+        if(list.isEmpty()){
+            responseObserver.onError(Status.NOT_FOUND.withDescription("There are no attentions").asRuntimeException());
+        }
         for(AttentionResponse a:list){
             responseObserver.onNext(a);
         }
