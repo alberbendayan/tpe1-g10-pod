@@ -79,4 +79,5 @@ message AttentionResponse {
   int32 doctorLevel = 4;
   int32 room = 5;
   bool isEmpty = 6;
+  int32 status = 7;
 }

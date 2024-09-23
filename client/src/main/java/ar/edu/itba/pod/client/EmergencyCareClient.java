@@ -28,13 +28,13 @@ public class EmergencyCareClient {
                     }
                     break;
                 case "careAllPatients":
-                    // TODO: VER QUE ONDA LA EXCEPTION CON EL ITERADOR
+                    // TODO: VER QUE ONDA LA EXCEPTION CON EL ITERADOR O PREGUNTAR SI ESTA BIEN EL STATUS
                     Iterator<AttentionResponse> attentionResponses = blockingStub.startAllAttention(Empty.getDefaultInstance());
                     for (Iterator<AttentionResponse> it = attentionResponses; it.hasNext(); ) {
                         AttentionResponse a = it.next();
-                        if (a.getPatientLevel() == -2) {
+                        if (a.getStatus() == -2) {
                             System.out.println("Room #" + a.getRoom() + " remains Occupied");
-                        } else if (a.getPatientLevel() == -1) {
+                        } else if (a.getStatus() == -1) {
                             System.out.println("Room #" + a.getRoom() + " remains Free");
                         } else {
                             System.out.println("Patient " + a.getPatient() + " (" + a.getPatientLevel() + ") and Doctor " + a.getDoctor() + " (" + a.getDoctorLevel() + ") are now in room #" + a.getRoom());

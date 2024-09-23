@@ -32,7 +32,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     private AttentionResponse exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
         return  AttentionResponse.newBuilder()
-                .setPatientLevel(-1)
+                .setStatus(-1)
                 .setRoom(number)
                 .build();
 
@@ -40,7 +40,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     private AttentionResponse exitRoomOccupied(int number,StreamObserver<AttentionResponse> responseObserver){
         return AttentionResponse.newBuilder()
-                .setPatientLevel(-2)
+                .setStatus(-2)
                 .setRoom(number)
                 .build();
 
@@ -78,6 +78,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .setPatientLevel(newPatient.getLevel())
                 .setRoom(roomNumber)
                 .setIsEmpty(true)
+                .setStatus(0)
                 .build();
         return response;
     }
