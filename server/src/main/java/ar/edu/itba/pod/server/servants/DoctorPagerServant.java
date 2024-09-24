@@ -34,29 +34,43 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
 
     @Override
     public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
-        String doctorId = request.getValue();
+        String name = request.getValue();
         //TODO: tiene que fallar si ya estaba
-        subscribers.computeIfAbsent(doctorId, k -> ConcurrentHashMap.newKeySet()).add(responseObserver);
-        Doctor doctor = doctorRepository.getDoctorByName(doctorId);
-        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.SUBSCRIBE).build());
+        subscribers.computeIfAbsent(name, k -> ConcurrentHashMap.newKeySet()).add(responseObserver);
+        Doctor doctor = doctorRepository.getDoctorByName(name);
+        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_SUBSCRIBE).build());
     }
 
     @Override
     public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
-        String doctorId = request.getValue();
-        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(doctorId);
+        String name = request.getValue();
+        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(name);
         if (doctorSubscribers != null) {
             doctorSubscribers.remove(responseObserver);
         }
-        Doctor doctor = doctorRepository.getDoctorByName(doctorId);
-        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.UNSUBSCRIBE).build());
+        Doctor doctor = doctorRepository.getDoctorByName(name);
+        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build());
+        responseObserver.onCompleted();
     }
 
 
-  public void notify(String doctorId, Doctor doctor, AttentionResponse attentionResponse, NotificationType notificationType) {
-        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(doctorId);
+    public void notify(String name, Doctor doctor, NotificationType notificationType) {
+        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(name);
         if (doctorSubscribers != null) {
-            doctorSubscribers.forEach(observer -> observer.onNext(Notification.newBuilder().setDoctor(doctor).setAttention(attentionResponse).setType(notificationType).build()));
+            doctorSubscribers.forEach(observer -> observer.onNext(Notification.newBuilder()
+                    .setDoctor(doctor)
+                    .setType(notificationType)
+                    .build()));
+        }
+    }
+
+    public void notify(String name, AttentionResponse attentionResponse, NotificationType notificationType) {
+        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(name);
+        if (doctorSubscribers != null) {
+            doctorSubscribers.forEach(observer -> observer.onNext(Notification.newBuilder()
+                    .setAttention(attentionResponse)
+                    .setType(notificationType)
+                    .build()));
         }
     }
 }
