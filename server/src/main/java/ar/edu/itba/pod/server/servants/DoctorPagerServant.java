@@ -34,13 +34,17 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     }
 
     @Override
-    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) throws InterruptedException {
+    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver)  {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
         notificationRepository.registerSubscriber(name, doctor);
         while(notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)){
             if(!notificationRepository.hasNext(name)){
-                sleep(100);
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             Notification notification = notificationRepository.getNotification(name);
                 responseObserver.onNext(notification);

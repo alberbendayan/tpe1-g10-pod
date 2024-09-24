@@ -23,7 +23,7 @@ public class NotificationRepository {
         Notification notification=null;
         Queue<Notification> doctorSubscribers = subscribers.get(name);
         if (doctorSubscribers != null) {
-             notification=Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build()
+             notification=Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build();
             doctorSubscribers.add(notification);
         }
         return notification;
