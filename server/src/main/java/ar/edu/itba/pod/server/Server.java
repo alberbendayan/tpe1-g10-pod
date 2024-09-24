@@ -1,9 +1,6 @@
 package ar.edu.itba.pod.server;
 
-import ar.edu.itba.pod.server.repositories.AttentionRepository;
-import ar.edu.itba.pod.server.repositories.DoctorRepository;
-import ar.edu.itba.pod.server.repositories.PatientRepository;
-import ar.edu.itba.pod.server.repositories.RoomRepository;
+import ar.edu.itba.pod.server.repositories.*;
 import ar.edu.itba.pod.server.servants.*;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
@@ -21,13 +18,14 @@ public class Server {
         DoctorRepository doctorRepository = new DoctorRepository();
         PatientRepository patientRepository = new PatientRepository();
         AttentionRepository attentionRepository = new AttentionRepository();
+        NotificationRepository notificationRepository = new NotificationRepository();
 
         int port = 50052;
         io.grpc.Server server = ServerBuilder.forPort(port)
-                .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
-                .addService(new AdministrationServant(roomRepository, doctorRepository))
+                .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository,attentionRepository,notificationRepository))
+                .addService(new AdministrationServant(roomRepository, doctorRepository, notificationRepository))
                 .addService(new QueryClientServant(roomRepository, patientRepository, attentionRepository))
-                .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository,attentionRepository))
+                .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository,attentionRepository,notificationRepository))
                 .addService(new WaitingRoomServant(patientRepository))
                 .build();
         server.start();

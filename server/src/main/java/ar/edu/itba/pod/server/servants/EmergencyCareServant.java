@@ -2,32 +2,32 @@ package ar.edu.itba.pod.server.servants;
 
 import ar.edu.itba.pod.grpc.common.*;
 import ar.edu.itba.pod.grpc.emergencyCareService.EmergencyCareServiceGrpc;
-import ar.edu.itba.pod.server.repositories.AttentionRepository;
-import ar.edu.itba.pod.server.repositories.DoctorRepository;
-import ar.edu.itba.pod.server.repositories.PatientRepository;
-import ar.edu.itba.pod.server.repositories.RoomRepository;
+import ar.edu.itba.pod.server.repositories.*;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Int32Value;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.checkerframework.checker.units.qual.A;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCareServiceImplBase {
 
-    private RoomRepository roomRepository;
-    private DoctorRepository doctorRepository;
-    private PatientRepository patientRepository;
-    private AttentionRepository attentionRepository;
+    private final RoomRepository roomRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
+    private final AttentionRepository attentionRepository;
+    private final NotificationRepository notificationRepository;
 
-    public EmergencyCareServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
+    public EmergencyCareServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository, NotificationRepository notificationRepository) {
         this.roomRepository = roomRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.attentionRepository = attentionRepository;
+        this.notificationRepository =  notificationRepository;
     }
 
     private AttentionResponse exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
@@ -89,6 +89,8 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         if(response.getStatus() < 0){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
         }
+        Doctor doctor = doctorRepository.getDoctorByName(response.getDoctor());
+        notificationRepository.notify(doctor);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -118,6 +120,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .build());
         Patient patient = patientRepository.getPatient(request.getPatient());
         patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_FINISHED);
+        notificationRepository.notify(request.getDoctor(),attentionResponse,NotificationType.NOTIFICATION_FINISH_ATTENTION);
         responseObserver.onNext(attentionRepository.finishAttention(attentionResponse));
         responseObserver.onCompleted();
     }

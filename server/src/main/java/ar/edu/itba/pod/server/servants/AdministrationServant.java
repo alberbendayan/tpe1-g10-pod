@@ -3,10 +3,7 @@ package ar.edu.itba.pod.server.servants;
 
 import ar.edu.itba.pod.grpc.administrationService.AdministrationServiceGrpc;
 import ar.edu.itba.pod.grpc.common.*;
-import ar.edu.itba.pod.server.repositories.AttentionRepository;
-import ar.edu.itba.pod.server.repositories.DoctorRepository;
-import ar.edu.itba.pod.server.repositories.PatientRepository;
-import ar.edu.itba.pod.server.repositories.RoomRepository;
+import ar.edu.itba.pod.server.repositories.*;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
 import io.grpc.Status;
@@ -17,9 +14,12 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     private final RoomRepository roomRepository;
     private final DoctorRepository doctorRepository;
 
-    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository) {
+    private final NotificationRepository notificationRepository;
+
+    public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, NotificationRepository notificationRepository) {
         this.roomRepository = roomRepository;
         this.doctorRepository = doctorRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -51,6 +51,7 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
         }else if(doctor.getLevel() == -2){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
         }
+        notificationRepository.notify(doctor);
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
     }
