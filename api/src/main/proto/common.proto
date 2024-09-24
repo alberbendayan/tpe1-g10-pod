@@ -23,6 +23,13 @@ enum Availability {
   AVAILABILITY_ATTENDING=3;
 }
 
+enum NotificationType {
+  DOCTOR_SET_AVAILABILITY = 0;
+  START_ATTENTION = 1;
+  FINISH_ATTENTION = 2;
+  SUBSCRIBE = 3;
+  UNSUBSCRIBE = 4;
+}
 
 message Patient {
   string name = 1;
@@ -80,4 +87,11 @@ message AttentionResponse {
   int32 room = 5;
   bool isEmpty = 6;
   int32 status = 7;
+}
+
+message Notification {
+  NotificationType type = 1;
+  optional AttentionResponse attention = 2;
+  optional Doctor doctor = 3;
+
 }

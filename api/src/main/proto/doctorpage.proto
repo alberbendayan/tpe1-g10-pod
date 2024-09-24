@@ -11,7 +11,7 @@ option java_outer_classname = "DoctorPageServiceModel";
 option java_multiple_files = true;
 
 service DoctorPageService{
-  rpc RegisterDoctor(google.protobuf.StringValue) returns (common.Doctor);
-  rpc UnsuscribeDoctor(google.protobuf.StringValue) returns (common.Doctor);
+  rpc RegisterDoctor(google.protobuf.StringValue) returns (common.Notification);
+  rpc UnsuscribeDoctor(google.protobuf.StringValue) returns (common.Notification);
 }
 

@@ -1,6 +1,9 @@
 package ar.edu.itba.pod.server.servants;
 
+import ar.edu.itba.pod.grpc.common.AttentionResponse;
 import ar.edu.itba.pod.grpc.common.Doctor;
+import ar.edu.itba.pod.grpc.common.Notification;
+import ar.edu.itba.pod.grpc.common.NotificationType;
 import ar.edu.itba.pod.grpc.doctorPageService.DoctorPageServiceGrpc;
 import ar.edu.itba.pod.server.repositories.AttentionRepository;
 import ar.edu.itba.pod.server.repositories.DoctorRepository;
@@ -20,7 +23,7 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     private final PatientRepository patientRepository;
     private final AttentionRepository attentionRepository;
 
-    private final Map<String, Set<StreamObserver<Doctor>>> subscribers = new ConcurrentHashMap<>();
+    private final Map<String, Set<StreamObserver<Notification>>> subscribers = new ConcurrentHashMap<>();
 
     public DoctorPagerServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository) {
         this.roomRepository = roomRepository;
@@ -30,36 +33,30 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     }
 
     @Override
-    public void registerDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
+    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String doctorId = request.getValue();
         //TODO: tiene que fallar si ya estaba
         subscribers.computeIfAbsent(doctorId, k -> ConcurrentHashMap.newKeySet()).add(responseObserver);
         Doctor doctor = doctorRepository.getDoctorByName(doctorId);
-        responseObserver.onNext(doctor);
-        responseObserver.onCompleted();
+        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.SUBSCRIBE).build());
     }
 
     @Override
-    public void unsuscribeDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
+    public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String doctorId = request.getValue();
-
-        Set<StreamObserver<Doctor>> doctorSubscribers = subscribers.get(doctorId);
+        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(doctorId);
         if (doctorSubscribers != null) {
             doctorSubscribers.remove(responseObserver);
         }
-
         Doctor doctor = doctorRepository.getDoctorByName(doctorId);
-        responseObserver.onNext(doctor);
-        responseObserver.onCompleted();
+        responseObserver.onNext(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.UNSUBSCRIBE).build());
     }
 
-    public void notifyDoctorChange(String doctorId, Doctor updatedDoctor) {
-        Set<StreamObserver<Doctor>> doctorSubscribers = subscribers.get(doctorId);
 
+  public void notify(String doctorId, Doctor doctor, AttentionResponse attentionResponse, NotificationType notificationType) {
+        Set<StreamObserver<Notification>> doctorSubscribers = subscribers.get(doctorId);
         if (doctorSubscribers != null) {
-            for (StreamObserver<Doctor> observer : doctorSubscribers) {
-                observer.onNext(updatedDoctor);
-            }
+            doctorSubscribers.forEach(observer -> observer.onNext(Notification.newBuilder().setDoctor(doctor).setAttention(attentionResponse).setType(notificationType).build()));
         }
     }
 }
