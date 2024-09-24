@@ -13,13 +13,12 @@ public class RoomRepository {
 
     private final List<Room> rooms;
     private int roomIdCounter = 1;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public RoomRepository() {
         this.rooms = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public synchronized Room addRoom() {
+    public Room addRoom() {
         Room room = Room.newBuilder()
                 .setId(roomIdCounter++)
                 .setIsEmpty(true)
@@ -28,71 +27,44 @@ public class RoomRepository {
         return room;
     }
 
-
     public boolean isFree(int number) {
-        lock.lock();
-        try {
-            return rooms.get(number - 1).getIsEmpty();
-        } finally {
-            lock.unlock();
-        }
+        return rooms.get(number - 1).getIsEmpty();
     }
 
     public Room setOccupied(int number) {
-        lock.lock();
-        try {
-            if (!isFree(number)) {
-                return null;
-            }
-            Room room = Room.newBuilder()
-                    .setId(number)
-                    .setIsEmpty(false)
-                    .build();
-            rooms.set(number - 1, room);
-            return room;
-        } finally {
-            lock.unlock();
+        if (!isFree(number)) {
+            return null;
         }
+        Room room = Room.newBuilder()
+                .setId(number)
+                .setIsEmpty(false)
+                .build();
+        rooms.set(number - 1, room);
+        return room;
     }
 
     public Room setFree(int number) {
-        lock.lock();
-        try {
-            if (isFree(number)) {
-                return null;
-            }
-            Room room = Room.newBuilder()
-                    .setId(number)
-                    .setIsEmpty(true)
-                    .build();
-            rooms.set(number - 1, room);
-            return room;
-        } finally {
-            lock.unlock();
+        if (isFree(number)) {
+            return null;
         }
+        Room room = Room.newBuilder()
+                .setId(number)
+                .setIsEmpty(true)
+                .build();
+        rooms.set(number - 1, room);
+        return room;
     }
-
     public List<Room> getAllFreeRooms() {
-        lock.lock();
-        try {
-            List<Room> ret = new ArrayList<>();
-            for (Room room : rooms) {
-                if (room.getIsEmpty()) {
-                    ret.add(room);
-                }
+        List<Room> ret = new ArrayList<>();
+        for (Room room : rooms) {
+            if (room.getIsEmpty()) {
+                ret.add(room);
             }
-            return ret;
-        } finally {
-            lock.unlock();
         }
+        return ret;
     }
 
     public List<Room> getRooms() {
-        lock.lock();
-        try {
-            return new ArrayList<>(rooms); // Devolvemos una copia para evitar problemas de concurrencia.
-        } finally {
-            lock.unlock();
-        }
+        return new ArrayList<>(rooms);
     }
 }

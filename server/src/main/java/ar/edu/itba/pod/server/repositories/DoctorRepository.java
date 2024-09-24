@@ -9,15 +9,16 @@ import javax.print.Doc;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class DoctorRepository {
-    private Map<String, Doctor>[] doctors;
+    private ConcurrentSkipListMap<String, Doctor>[] doctors;
     private final int QTY_LEVELS_DOCTORS = 5;
 
     public DoctorRepository() {
-        doctors = new Map[QTY_LEVELS_DOCTORS];
+        doctors = new ConcurrentSkipListMap[QTY_LEVELS_DOCTORS];
         for (int i = 0; i < doctors.length; i++) {
-            doctors[i] = new TreeMap<>();
+            doctors[i] = new ConcurrentSkipListMap<>();
         }
     }
 
