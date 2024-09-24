@@ -80,6 +80,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .setIsEmpty(true)
                 .setStatus(0)
                 .build();
+        attentionRepository.startAttention(response);
         return response;
     }
     @Override
@@ -88,7 +89,6 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         if(response.getStatus() < 0){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
         }
-        attentionRepository.startAttention(response);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -105,6 +105,9 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     @Override
     public void finishAttention(Attention request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse attentionResponse = attentionRepository.existAttention(request);
+        if(attentionResponse == null){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("El att response es null").asRuntimeException());
+        }
         if(attentionResponse == null || doctorRepository.getDoctorByName(request.getDoctor()) == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
         }

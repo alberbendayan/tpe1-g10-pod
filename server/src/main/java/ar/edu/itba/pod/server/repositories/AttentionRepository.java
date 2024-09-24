@@ -13,13 +13,20 @@ public class AttentionRepository {
         finishedAttentions = new ArrayList<>();
     }
     public AttentionResponse startAttention (AttentionResponse request){
+        if(startedAttentions.containsKey(request.getRoom())){
+            return null;
+        }
         startedAttentions.put(request.getRoom(),request);
         return request;
     }
 
     public AttentionResponse existAttention(Attention attention) {
+
         AttentionResponse a = startedAttentions.get(attention.getRoom());
-        if (a!= null && a.getDoctor().equals(attention.getDoctor()) && a.getPatient().equals(attention.getPatient()) && a.getRoom() == attention.getRoom())
+        if (a!= null
+                && a.getDoctor().equals(attention.getDoctor())
+                && a.getPatient().equals(attention.getPatient())
+                && a.getRoom() == attention.getRoom())
             return a;
         return null;
     }
