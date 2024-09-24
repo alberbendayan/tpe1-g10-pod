@@ -43,7 +43,16 @@ public class NotificationRepository {
         }
     }
 
-    public  Queue<Notification> getSubscriber(String name) {
-        return subscribers.get(name);
+    public  Notification getNotification(String name) {
+        return subscribers.get(name).poll();
+    }
+    public boolean isRegistered(String name){
+        Queue<Notification> subscriber=subscribers.get(name);
+
+        return subscriber==null;
+    }
+
+    public Boolean hasNext(String name){
+        return subscribers.get(name).peek()!=null;
     }
 }

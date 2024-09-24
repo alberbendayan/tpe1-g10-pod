@@ -14,6 +14,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.Thread.sleep;
+
 public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceImplBase {
 
     private final RoomRepository roomRepository;
@@ -32,14 +34,18 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     }
 
     @Override
-    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
+    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) throws InterruptedException {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
         notificationRepository.registerSubscriber(name, doctor);
-        Queue<Notification> notifications = notificationRepository.getSubscriber(name);
-        for(Notification notification : notifications){
-            responseObserver.onNext(notification);
+        while(notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)){
+            if(!notificationRepository.hasNext(name)){
+                sleep(100);
+            }
+            Notification notification = notificationRepository.getNotification(name);
+                responseObserver.onNext(notification);
         }
+
 
     }
 
