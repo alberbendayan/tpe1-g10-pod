@@ -25,8 +25,7 @@ public class ChannelCreator {
             return ManagedChannelBuilder.forAddress(address, Integer.parseInt(port))
                     .usePlaintext()
                     .build();
-        }
-        else{
+        } else {
             System.out.println("Invalid server address");
             throw new IllegalArgumentException("Invalid server address");
         }

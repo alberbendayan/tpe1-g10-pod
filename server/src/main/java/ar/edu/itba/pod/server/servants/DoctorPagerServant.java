@@ -25,29 +25,30 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     private final NotificationRepository notificationRepository;
 
 
-    public DoctorPagerServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository, NotificationRepository notificationRepository){
+    public DoctorPagerServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository, NotificationRepository notificationRepository) {
         this.roomRepository = roomRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.attentionRepository = attentionRepository;
-        this.notificationRepository= notificationRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
-    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver)  {
+    public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
         notificationRepository.registerSubscriber(name, doctor);
-        while(notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)){
-            if(!notificationRepository.hasNext(name)){
+        while (notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)) {
+            if (!notificationRepository.hasNext(name)) {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
-            Notification notification = notificationRepository.getNotification(name);
+            } else {
+                Notification notification = notificationRepository.getNotification(name);
                 responseObserver.onNext(notification);
+            }
         }
 
 
@@ -57,7 +58,7 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
-        Notification notification=notificationRepository.unregisterSubscriber(name, doctor);
+        Notification notification = notificationRepository.unregisterSubscriber(name, doctor);
         responseObserver.onNext(notification);
         responseObserver.onCompleted();
     }

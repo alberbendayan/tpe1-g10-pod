@@ -22,16 +22,16 @@ public class DoctorRepository {
         }
     }
 
-    public Doctor addDoctor(RequestDoctorLevel doctor){
+    public Doctor addDoctor(RequestDoctorLevel doctor) {
 
         int level = doctor.getLevel();
         String name = doctor.getName();
 
-        if(level<1 || level>5){
+        if (level < 1 || level > 5) {
             return null;
         }
-        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
-            if(doctors[i].containsKey(name)){
+        for (int i = 0; i < QTY_LEVELS_DOCTORS; i++) {
+            if (doctors[i].containsKey(name)) {
                 return Doctor.newBuilder()
                         .setName(doctor.getName())
                         .setLevel(-1)
@@ -44,22 +44,22 @@ public class DoctorRepository {
                 .setAvailability(Availability.AVAILABILITY_AVAILABLE)
                 .setIsRegistered(false)
                 .build();
-        doctors[level-1].put(name,doc);
+        doctors[level - 1].put(name, doc);
 
         return doc;
     }
 
-    public Doctor changeAvailability(RequestDoctor doctor){
+    public Doctor changeAvailability(RequestDoctor doctor) {
         String name = doctor.getName();
-        for(int i = 0; i< QTY_LEVELS_DOCTORS; i++){
-            if(doctors[i].containsKey(name)){
+        for (int i = 0; i < QTY_LEVELS_DOCTORS; i++) {
+            if (doctors[i].containsKey(name)) {
                 Doctor old = doctors[i].get(name);
-                if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
+                if (old.getAvailability() == Availability.AVAILABILITY_ATTENDING) {
                     return Doctor.newBuilder()
                             .setName(doctor.getName())
                             .setLevel(-1)
                             .build();
-                }else{
+                } else {
                     Doctor doc = Doctor.newBuilder()
                             .setName(name)
                             .setLevel(old.getLevel())
@@ -67,7 +67,7 @@ public class DoctorRepository {
                             .setIsRegistered(old.getIsRegistered())
                             .build();
                     doctors[i].remove(name);
-                    doctors[i].put(name,doc);
+                    doctors[i].put(name, doc);
                     return doc;
                 }
             }
@@ -77,34 +77,34 @@ public class DoctorRepository {
                 .build();
     }
 
-    public Doctor changeAvailability(RequestDoctor doctor,int level){
+    public Doctor changeAvailability(RequestDoctor doctor, int level) {
 
         String name = doctor.getName();
-            if(doctors[level-1].containsKey(name)){
-                Doctor old = doctors[level-1].get(name);
-                if(old.getAvailability() == Availability.AVAILABILITY_ATTENDING){
-                    return null;
-                }else{
-                    Doctor doc = Doctor.newBuilder()
-                            .setName(name)
-                            .setLevel(old.getLevel())
-                            .setAvailability(doctor.getAvailability())
-                            .setIsRegistered(old.getIsRegistered())
-                            .build();
-                    doctors[level-1].remove(name);
-                    doctors[level-1].put(name,doc);
-                    return doc;
-                }
+        if (doctors[level - 1].containsKey(name)) {
+            Doctor old = doctors[level - 1].get(name);
+            if (old.getAvailability() == Availability.AVAILABILITY_ATTENDING) {
+                return null;
+            } else {
+                Doctor doc = Doctor.newBuilder()
+                        .setName(name)
+                        .setLevel(old.getLevel())
+                        .setAvailability(doctor.getAvailability())
+                        .setIsRegistered(old.getIsRegistered())
+                        .build();
+                doctors[level - 1].remove(name);
+                doctors[level - 1].put(name, doc);
+                return doc;
             }
+        }
         return Doctor.newBuilder()
                 .setLevel(-2)
                 .build();
     }
 
-    public Doctor getAvailability(String name){
+    public Doctor getAvailability(String name) {
         System.out.println("El dr es:" + name);
-        for(int i = 0; i<QTY_LEVELS_DOCTORS;i++){
-            if(doctors[i].containsKey(name)){
+        for (int i = 0; i < QTY_LEVELS_DOCTORS; i++) {
+            if (doctors[i].containsKey(name)) {
                 return doctors[i].get(name);
             }
         }
@@ -112,8 +112,8 @@ public class DoctorRepository {
 
     }
 
-    public Doctor getDoctorToPatient (int level){
-        for(int i=level-1;i<QTY_LEVELS_DOCTORS;i++){
+    public Doctor getDoctorToPatient(int level) {
+        for (int i = level - 1; i < QTY_LEVELS_DOCTORS; i++) {
             for (Map.Entry<String, Doctor> entry : doctors[i].entrySet()) {
                 Doctor doc = entry.getValue();
                 if (doc.getAvailability() == Availability.AVAILABILITY_AVAILABLE) {
@@ -124,9 +124,9 @@ public class DoctorRepository {
         return null;
     }
 
-    public Doctor getDoctorByName(String name){
-        for(int i = 0; i<QTY_LEVELS_DOCTORS;i++){
-            if(doctors[i].containsKey(name)){
+    public Doctor getDoctorByName(String name) {
+        for (int i = 0; i < QTY_LEVELS_DOCTORS; i++) {
+            if (doctors[i].containsKey(name)) {
                 return doctors[i].get(name);
             }
         }

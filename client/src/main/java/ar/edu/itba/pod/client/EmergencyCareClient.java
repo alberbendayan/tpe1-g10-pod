@@ -23,7 +23,7 @@ public class EmergencyCareClient {
                     try {
                         AttentionResponse attentionResponse = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
                         System.out.println("Patient " + attentionResponse.getPatient() + " (" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;
@@ -49,7 +49,7 @@ public class EmergencyCareClient {
                                 .setRoom(Integer.parseInt(System.getProperty("room")))
                                 .build());
                         System.out.println("Patient " + response.getPatient() + " (" + response.getPatientLevel() + ") has been discharged from Doctor " + response.getDoctor() + " (" + response.getDoctorLevel() + ") and the room room #" + response.getRoom() + " is now Free");
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;

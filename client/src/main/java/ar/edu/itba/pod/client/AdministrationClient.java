@@ -29,7 +29,7 @@ public class AdministrationClient {
                                 .build();
                         doctor = blockingStub.addDoctor(requestDoctorLevel);
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") added successfully");
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;
@@ -56,9 +56,9 @@ public class AdministrationClient {
                             .setName(System.getProperty("doctor"))
                             .setAvailability(availability)
                             .build());
-                    if(doctor == null){
+                    if (doctor == null) {
                         System.out.println("An error has occurred");
-                    }else {
+                    } else {
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
                     }
                     break;
@@ -72,7 +72,7 @@ public class AdministrationClient {
                             default -> throw new RuntimeException(); //TODO: check exception
                         };
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;

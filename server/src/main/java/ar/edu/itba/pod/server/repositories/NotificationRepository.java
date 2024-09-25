@@ -20,16 +20,16 @@ public class NotificationRepository {
     }
 
     public Notification unregisterSubscriber(String name, Doctor doctor) {
-        Notification notification=null;
+        Notification notification = null;
         Queue<Notification> doctorSubscribers = subscribers.get(name);
         if (doctorSubscribers != null) {
-             notification=Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build();
+            notification = Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build();
             doctorSubscribers.add(notification);
         }
         return notification;
     }
 
-    public void notify( Doctor doctor) {
+    public void notify(Doctor doctor) {
         Queue<Notification> doctorSubscribers = subscribers.get(doctor.getName());
         if (doctorSubscribers != null) {
             doctorSubscribers.add(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_DOCTOR_SET_AVAILABILITY).build());
@@ -43,16 +43,17 @@ public class NotificationRepository {
         }
     }
 
-    public  Notification getNotification(String name) {
+    public Notification getNotification(String name) {
         return subscribers.get(name).poll();
     }
-    public boolean isRegistered(String name){
-        Queue<Notification> subscriber=subscribers.get(name);
 
-        return subscriber==null;
+    public boolean isRegistered(String name) {
+        Queue<Notification> subscriber = subscribers.get(name);
+
+        return subscriber == null;
     }
 
-    public Boolean hasNext(String name){
-        return subscribers.get(name).peek()!=null;
+    public Boolean hasNext(String name) {
+        return subscribers.get(name).peek() != null;
     }
 }

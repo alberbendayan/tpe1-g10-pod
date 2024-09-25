@@ -64,9 +64,9 @@ public class QueryClient {
 
                         content.append("Room,Patient,Doctor\n");
                         Iterator<AttentionResponse> attentionIterator;
-                        if(room !=null){
-                            attentionIterator= blockingStub.getAttentionsRoom(Int32Value.of(room));
-                        }else {
+                        if (room != null) {
+                            attentionIterator = blockingStub.getAttentionsRoom(Int32Value.of(room));
+                        } else {
                             attentionIterator = blockingStub.getAttentions(Empty.getDefaultInstance());
                         }
                         while (attentionIterator.hasNext()) {

@@ -32,12 +32,12 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     @Override
     public void addDoctor(RequestDoctorLevel request, StreamObserver<Doctor> responseObserver) {
-        if(request.getLevel()>5 || request.getLevel()<1){
+        if (request.getLevel() > 5 || request.getLevel() < 1) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid level").asRuntimeException());
         }
         Doctor doctor = doctorRepository.addDoctor(request);
-        if(doctor.getLevel() == -1){
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor "+request.getName()+" already exists").asRuntimeException());
+        if (doctor.getLevel() == -1) {
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor " + request.getName() + " already exists").asRuntimeException());
         }
         responseObserver.onNext(doctor);
         responseObserver.onCompleted();
@@ -46,9 +46,9 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     @Override
     public void setDoctor(RequestDoctor request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.changeAvailability(request);
-        if(doctor.getLevel() == -1){
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor "+request.getName()+" is attending").asRuntimeException());
-        }else if(doctor.getLevel() == -2){
+        if (doctor.getLevel() == -1) {
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor " + request.getName() + " is attending").asRuntimeException());
+        } else if (doctor.getLevel() == -2) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
         }
         notificationRepository.notify(doctor);
@@ -59,7 +59,7 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
     @Override
     public void checkDoctor(StringValue request, StreamObserver<Doctor> responseObserver) {
         Doctor doctor = doctorRepository.getAvailability(request.getValue());
-        if(doctor.getLevel() == -2){
+        if (doctor.getLevel() == -2) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Doctor does not exists").asRuntimeException());
         }
         responseObserver.onNext(doctor);
