@@ -40,10 +40,12 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
         Doctor doctor = doctorRepository.getDoctorByName(name);
         if(doctor == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor does not exist").asRuntimeException());
+            return;
         }
         Doctor d =notificationRepository.registerSubscriber(doctor);
         if(d == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The action could not be executed").asRuntimeException());
+            return;
         }
         while (notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)) {
             if (!notificationRepository.hasNext(name)) {
@@ -58,13 +60,14 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
             }
         }
 
+        responseObserver.onCompleted();
 
     }
 
     @Override
     public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
-        if(notificationRepository.isRegistered(name)){
+        if(!notificationRepository.isRegistered(name)){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor is not registered").asRuntimeException());
         }
         Doctor doctor = doctorRepository.getDoctorByName(name);

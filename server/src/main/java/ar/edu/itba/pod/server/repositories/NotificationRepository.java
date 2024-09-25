@@ -69,11 +69,17 @@ public class NotificationRepository {
 
     public boolean isRegistered(String name) {
         Queue<Notification> subscriber = subscribers.get(name);
+        return subscriber != null;
+    }
 
-        return subscriber == null;
+    public void removeSubscriber(String name){
+        subscribers.remove(name);
     }
 
     public Boolean hasNext(String name) {
-        return subscribers.get(name).peek() != null;
+        if(!subscribers.containsKey(name)){
+            return false;
+        }
+        return !subscribers.get(name).isEmpty();
     }
 }
