@@ -34,36 +34,40 @@ public class AdministrationClient {
                     }
                     break;
                 case "setDoctor":
-                    Availability availability;
-                    switch (System.getProperty("availability")) {
-                        case "available":
-                            availability = Availability.AVAILABILITY_AVAILABLE;
-                            availabilityMessage = "Available";
-                            break;
-                        case "unavailable":
-                            availability = Availability.AVAILABILITY_UNAVAILABLE;
-                            availabilityMessage = "Unavailable";
-                            break;
-                        case "attending":
-                            availability = Availability.AVAILABILITY_ATTENDING;
-                            availabilityMessage = "Attending";
-                            break;
-                        default:
-                            availability = Availability.AVAILABILITY_UNSPECIFIED;;
-                            availabilityMessage = "Invalid availability "+System.getProperty("availability");
-                    }
-                    if(availability == Availability.AVAILABILITY_UNSPECIFIED){
-                        System.out.println("Invalid availability");
-                    }else {
-                        doctor = blockingStub.setDoctor(RequestDoctor.newBuilder()
-                                .setName(System.getProperty("doctor"))
-                                .setAvailability(availability)
-                                .build());
-                        if (doctor == null) {
-                            System.out.println("An error has occurred");
-                        } else {
-                            System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    try{
+                        Availability availability;
+                        switch (System.getProperty("availability")) {
+                            case "available":
+                                availability = Availability.AVAILABILITY_AVAILABLE;
+                                availabilityMessage = "Available";
+                                break;
+                            case "unavailable":
+                                availability = Availability.AVAILABILITY_UNAVAILABLE;
+                                availabilityMessage = "Unavailable";
+                                break;
+                            case "attending":
+                                availability = Availability.AVAILABILITY_ATTENDING;
+                                availabilityMessage = "Attending";
+                                break;
+                            default:
+                                availability = Availability.AVAILABILITY_UNSPECIFIED;;
+                                availabilityMessage = "Invalid availability "+System.getProperty("availability");
                         }
+                        if(availability == Availability.AVAILABILITY_UNSPECIFIED){
+                            System.out.println("Invalid availability");
+                        }else {
+                            doctor = blockingStub.setDoctor(RequestDoctor.newBuilder()
+                                    .setName(System.getProperty("doctor"))
+                                    .setAvailability(availability)
+                                    .build());
+                            if (doctor == null) {
+                                System.out.println("An error has occurred");
+                            } else {
+                                System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                            }
+                        }
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "checkDoctor":

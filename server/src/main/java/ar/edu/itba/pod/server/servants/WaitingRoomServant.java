@@ -38,10 +38,11 @@ public class WaitingRoomServant extends WaitingRoomServiceGrpc.WaitingRoomServic
         Patient patient = patientRepository.updateLevel(request.getName(), request.getLevel());
         if (request.getLevel() < 1 || request.getLevel() > 5) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid level").asRuntimeException());
-        } else if (patient.getLevel() == -2) {
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Patient " + request.getName() + " does not exists").asRuntimeException());
+        } else if (patient.getLevel() < 0) {
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Action could not be executed").asRuntimeException());
+        }else {
+            responseObserver.onNext(patient);
         }
-        responseObserver.onNext(patient);
         responseObserver.onCompleted();
     }
 

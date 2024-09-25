@@ -18,7 +18,7 @@ public class RoomRepository {
         this.rooms = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public Room addRoom() {
+    public synchronized Room addRoom() {
         Room room = Room.newBuilder()
                 .setId(roomIdCounter++)
                 .setIsEmpty(true)
@@ -27,11 +27,14 @@ public class RoomRepository {
         return room;
     }
 
-    public boolean isFree(int number) {
+    public synchronized boolean isFree(int number) {
+        if (number < 1 || number > rooms.size()) {
+            return false;
+        }
         return rooms.get(number - 1).getIsEmpty();
     }
 
-    public Room setOccupied(int number) {
+    public synchronized Room setOccupied(int number) {
         if (!isFree(number)) {
             return null;
         }
@@ -43,7 +46,7 @@ public class RoomRepository {
         return room;
     }
 
-    public Room setFree(int number) {
+    public synchronized Room setFree(int number) {
         if (isFree(number)) {
             return null;
         }
@@ -55,7 +58,7 @@ public class RoomRepository {
         return room;
     }
 
-    public List<Room> getRooms() {
+    public synchronized List<Room> getRooms() {
         return new ArrayList<>(rooms);
     }
 }

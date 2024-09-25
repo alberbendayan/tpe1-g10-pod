@@ -81,9 +81,14 @@ public class PatientRepository {
     }
 
     public Patient updateLevel(String name, int newLevel) {
+        if(newLevel < 1 || newLevel > 5){
+            return Patient.newBuilder().setLevel(-1).build();
+        }
         lock.writeLock().lock();
         Patient oldPatient = patients.get(name);
-
+        if(oldPatient == null){
+            return Patient.newBuilder().setLevel(-2).build();
+        }
         try {
             if (!waitingPatients[oldPatient.getLevel() - 1].remove(oldPatient) || patients.remove(name) == null) {
                 return Patient.newBuilder().setLevel(-2).build();
@@ -110,6 +115,11 @@ public class PatientRepository {
         lock.readLock().lock();
         try {
             Patient patient = patients.get(name);
+            if(patient == null){
+                return PatientTime.newBuilder()
+                        .setPatientsAhead(-1)
+                        .build();
+            }
             int counter = 0;
             int i;
             for (i = QTY_LEVELS - 1; i >= patient.getLevel(); i--) {
@@ -124,7 +134,9 @@ public class PatientRepository {
                 }
                 counter++;
             }
-            return null;
+            return PatientTime.newBuilder()
+                    .setPatientsAhead(-1)
+                    .build();
         } finally {
             lock.readLock().unlock();
         }
