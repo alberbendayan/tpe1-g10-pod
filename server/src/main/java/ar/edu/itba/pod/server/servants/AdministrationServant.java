@@ -13,7 +13,6 @@ public class AdministrationServant extends AdministrationServiceGrpc.Administrat
 
     private final RoomRepository roomRepository;
     private final DoctorRepository doctorRepository;
-
     private final NotificationRepository notificationRepository;
 
     public AdministrationServant(RoomRepository roomRepository, DoctorRepository doctorRepository, NotificationRepository notificationRepository) {

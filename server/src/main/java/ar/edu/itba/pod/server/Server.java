@@ -22,7 +22,7 @@ public class Server {
 
         int port = 50052;
         io.grpc.Server server = ServerBuilder.forPort(port)
-                .addService(new DoctorPagerServant(roomRepository, doctorRepository, patientRepository,attentionRepository,notificationRepository))
+                .addService(new DoctorPagerServant( doctorRepository,notificationRepository))
                 .addService(new AdministrationServant(roomRepository, doctorRepository, notificationRepository))
                 .addService(new QueryClientServant(roomRepository, patientRepository, attentionRepository))
                 .addService(new EmergencyCareServant(roomRepository, doctorRepository, patientRepository,attentionRepository,notificationRepository))

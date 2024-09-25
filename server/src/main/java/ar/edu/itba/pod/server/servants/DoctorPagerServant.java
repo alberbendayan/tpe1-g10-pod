@@ -19,18 +19,12 @@ import static java.lang.Thread.sleep;
 
 public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceImplBase {
 
-    private final RoomRepository roomRepository;
     private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
-    private final AttentionRepository attentionRepository;
     private final NotificationRepository notificationRepository;
 
 
-    public DoctorPagerServant(RoomRepository roomRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AttentionRepository attentionRepository, NotificationRepository notificationRepository) {
-        this.roomRepository = roomRepository;
+    public DoctorPagerServant(DoctorRepository doctorRepository, NotificationRepository notificationRepository) {
         this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.attentionRepository = attentionRepository;
         this.notificationRepository = notificationRepository;
     }
 
@@ -38,12 +32,12 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
-        if(doctor == null){
+        if (doctor == null) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor does not exist").asRuntimeException());
             return;
         }
         Queue<Notification> notifications = notificationRepository.registerSubscriber(doctor);
-        if(notifications == null){
+        if (notifications == null) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The action could not be executed").asRuntimeException());
             return;
         }
@@ -67,7 +61,7 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     @Override
     public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
-        if(!notificationRepository.isRegistered(name)){
+        if (!notificationRepository.isRegistered(name)) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor is not registered").asRuntimeException());
         }
         Doctor doctor = doctorRepository.getDoctorByName(name);

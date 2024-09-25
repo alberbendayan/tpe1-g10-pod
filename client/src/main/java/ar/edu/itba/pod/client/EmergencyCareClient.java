@@ -21,14 +21,17 @@ public class EmergencyCareClient {
             switch (System.getProperty("action")) {
                 case "carePatient":
                     try {
-                        AttentionResponse attentionResponse = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
-                        System.out.println("Patient " + attentionResponse.getPatient() + " (" + attentionResponse.getPatientLevel() + ") and Doctor " + attentionResponse.getDoctor() + " (" + attentionResponse.getDoctorLevel() + ") are now in room #" + attentionResponse.getRoom());
+                        AttentionResponse a = blockingStub.startAttention(Int32Value.of(Integer.parseInt(System.getProperty("room"))));
+                        if (a.getStatus() == -1) {
+                            System.out.println("Room #" + a.getRoom() + " remains Free");
+                        } else {
+                            System.out.println("Patient " + a.getPatient() + " (" + a.getPatientLevel() + ") and Doctor " + a.getDoctor() + " (" + a.getDoctorLevel() + ") are now in room #" + a.getRoom());
+                        }
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "careAllPatients":
-                    // TODO: VER QUE ONDA LA EXCEPTION CON EL ITERADOR O PREGUNTAR SI ESTA BIEN EL STATUS
                     Iterator<AttentionResponse> attentionResponses = blockingStub.startAllAttention(Empty.getDefaultInstance());
                     for (Iterator<AttentionResponse> it = attentionResponses; it.hasNext(); ) {
                         AttentionResponse a = it.next();

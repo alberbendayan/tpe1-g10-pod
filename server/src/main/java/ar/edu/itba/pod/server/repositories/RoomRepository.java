@@ -55,16 +55,6 @@ public class RoomRepository {
         return room;
     }
 
-    public List<Room> getAllFreeRooms() {
-        List<Room> ret = new ArrayList<>();
-        for (Room room : rooms) {
-            if (room.getIsEmpty()) {
-                ret.add(room);
-            }
-        }
-        return ret;
-    }
-
     public List<Room> getRooms() {
         return new ArrayList<>(rooms);
     }

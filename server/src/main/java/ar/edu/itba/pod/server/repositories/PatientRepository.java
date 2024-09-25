@@ -29,8 +29,8 @@ public class PatientRepository {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public PatientRepository() {
-        waitingPatients = new SortedSet[QTY_LEVELS];
-        patients = new LinkedHashMap<>();
+        waitingPatients = new TreeSet[QTY_LEVELS];
+        patients = new HashMap<>();
 
         for (int i = 0; i < QTY_LEVELS; i++) {
             waitingPatients[i] = new TreeSet<>((o1, o2) -> {
@@ -85,7 +85,7 @@ public class PatientRepository {
         Patient oldPatient = patients.get(name);
 
         try {
-            if(!waitingPatients[oldPatient.getLevel()-1].remove(oldPatient) || patients.remove(name) == null){
+            if (!waitingPatients[oldPatient.getLevel() - 1].remove(oldPatient) || patients.remove(name) == null) {
                 return Patient.newBuilder().setLevel(-2).build();
             }
             Patient patient = Patient.newBuilder()

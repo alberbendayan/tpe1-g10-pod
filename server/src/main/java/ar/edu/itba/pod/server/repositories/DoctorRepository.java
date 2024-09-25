@@ -41,7 +41,7 @@ public class DoctorRepository {
         Doctor doc = Doctor.newBuilder()
                 .setName(name)
                 .setLevel(level)
-                .setAvailability(Availability.AVAILABILITY_AVAILABLE)
+                .setAvailability(Availability.AVAILABILITY_UNAVAILABLE)
                 .setIsRegistered(false)
                 .build();
         doctors[level - 1].put(name, doc);
@@ -111,14 +111,14 @@ public class DoctorRepository {
                         .build();
             }
             Doctor doc = Doctor.newBuilder()
-                        .setName(name)
-                        .setLevel(old.getLevel())
-                        .setAvailability(doctor.getAvailability())
-                        .setIsRegistered(old.getIsRegistered())
-                        .build();
-                doctors[level - 1].remove(name);
-                doctors[level - 1].put(name, doc);
-                return doc;
+                    .setName(name)
+                    .setLevel(old.getLevel())
+                    .setAvailability(doctor.getAvailability())
+                    .setIsRegistered(old.getIsRegistered())
+                    .build();
+            doctors[level - 1].remove(name);
+            doctors[level - 1].put(name, doc);
+            return doc;
         }
         return Doctor.newBuilder()
                 .setLevel(-2)

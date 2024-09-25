@@ -30,7 +30,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         this.notificationRepository =  notificationRepository;
     }
 
-    private AttentionResponse exitWithoutError(int number,StreamObserver<AttentionResponse> responseObserver){
+    private AttentionResponse exitWithoutError(int number){
         return  AttentionResponse.newBuilder()
                 .setStatus(-1)
                 .setRoom(number)
@@ -38,7 +38,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     }
 
-    private AttentionResponse exitRoomOccupied(int number,StreamObserver<AttentionResponse> responseObserver){
+    private AttentionResponse exitRoomOccupied(int number){
         return AttentionResponse.newBuilder()
                 .setStatus(-2)
                 .setRoom(number)
@@ -46,18 +46,18 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
 
     }
 
-    private AttentionResponse attention(Int32Value request, StreamObserver<AttentionResponse> responseObserver){
+    private AttentionResponse attention(Int32Value request){
         int roomNumber = request.getValue();
         if(!roomRepository.isFree(roomNumber)){
-            return exitRoomOccupied(roomNumber,responseObserver);
+            return exitRoomOccupied(roomNumber);
         }
         Patient patient = patientRepository.getMostUrgentPatient();
         if(patient == null){
-            return exitWithoutError(roomNumber,responseObserver);
+            return exitWithoutError(roomNumber);
         }
         Doctor doctor = doctorRepository.getDoctorToPatient(patient.getLevel());
         if(doctor == null){
-            return exitWithoutError(roomNumber,responseObserver);
+            return exitWithoutError(roomNumber);
         }
 
         Patient newPatient = patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_ATTENDING);
@@ -77,7 +77,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .setPatient(newPatient.getName())
                 .setPatientLevel(newPatient.getLevel())
                 .setRoom(roomNumber)
-                .setIsEmpty(true)
+                .setIsEmpty(room.getIsEmpty())
                 .setStatus(0)
                 .build();
         attentionRepository.startAttention(response);
@@ -87,11 +87,10 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     }
     @Override
     public void startAttention(Int32Value request, StreamObserver<AttentionResponse> responseObserver) {
-        AttentionResponse response = attention(request,responseObserver);
+        AttentionResponse response = attention(request);
         if(response.getStatus() < 0){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
         }
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -100,7 +99,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     public void startAllAttention(Empty request, StreamObserver<AttentionResponse> responseObserver) {
         List<Room> rooms = roomRepository.getRooms();
         for(Room room : rooms){
-            responseObserver.onNext(attention(Int32Value.of(room.getId()),responseObserver));
+            responseObserver.onNext(attention(Int32Value.of(room.getId())));
         }
         responseObserver.onCompleted();
     }

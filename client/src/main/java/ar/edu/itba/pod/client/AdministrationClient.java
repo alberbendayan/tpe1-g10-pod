@@ -49,17 +49,21 @@ public class AdministrationClient {
                             availabilityMessage = "Attending";
                             break;
                         default:
-                            throw new RuntimeException(); //TODO: check exception
-
+                            availability = Availability.AVAILABILITY_UNSPECIFIED;;
+                            availabilityMessage = "Invalid availability "+System.getProperty("availability");
                     }
-                    doctor = blockingStub.setDoctor(RequestDoctor.newBuilder()
-                            .setName(System.getProperty("doctor"))
-                            .setAvailability(availability)
-                            .build());
-                    if (doctor == null) {
-                        System.out.println("An error has occurred");
-                    } else {
-                        System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                    if(availability == Availability.AVAILABILITY_UNSPECIFIED){
+                        System.out.println("Invalid availability");
+                    }else {
+                        doctor = blockingStub.setDoctor(RequestDoctor.newBuilder()
+                                .setName(System.getProperty("doctor"))
+                                .setAvailability(availability)
+                                .build());
+                        if (doctor == null) {
+                            System.out.println("An error has occurred");
+                        } else {
+                            System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
+                        }
                     }
                     break;
                 case "checkDoctor":
@@ -69,7 +73,7 @@ public class AdministrationClient {
                             case AVAILABILITY_AVAILABLE -> "Available";
                             case AVAILABILITY_UNAVAILABLE -> "Unavailable";
                             case AVAILABILITY_ATTENDING -> "Attending";
-                            default -> throw new RuntimeException(); //TODO: check exception
+                            default -> throw new RuntimeException();
                         };
                         System.out.println("Doctor " + doctor.getName() + " (" + doctor.getLevel() + ") is " + availabilityMessage);
                     } catch (Exception e) {

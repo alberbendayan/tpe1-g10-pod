@@ -16,7 +16,7 @@ public class NotificationRepository {
     private final Map<String, Queue<Notification>> subscribers = new ConcurrentHashMap<>();
 
     public Queue<Notification> registerSubscriber(Doctor doctor) {
-        if(subscribers.containsKey(doctor.getName())){
+        if (subscribers.containsKey(doctor.getName())) {
             return null;
         }
         Queue<Notification> q = new ConcurrentLinkedQueue<>();
@@ -25,7 +25,7 @@ public class NotificationRepository {
                 .setType(NotificationType.NOTIFICATION_SUBSCRIBE)
                 .build()
         );
-        subscribers.put(doctor.getName(),q);
+        subscribers.put(doctor.getName(), q);
         return q;
     }
 
@@ -57,23 +57,9 @@ public class NotificationRepository {
         }
     }
 
-    public Notification getNotification(String name) {
-        return subscribers.get(name).poll();
-    }
-
     public boolean isRegistered(String name) {
         Queue<Notification> subscriber = subscribers.get(name);
         return subscriber != null;
     }
 
-    public void removeSubscriber(String name){
-        subscribers.remove(name);
-    }
-
-    public Boolean hasNext(String name) {
-        if(!subscribers.containsKey(name)){
-            return false;
-        }
-        return !subscribers.get(name).isEmpty();
-    }
 }
