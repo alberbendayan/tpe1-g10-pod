@@ -24,7 +24,7 @@ public class DoctorPagerClient {
             switch (System.getProperty("action")) {
                 case "register":
                     try {
-                        Iterator<Notification>   notifications = blockingStub.registerDoctor(StringValue.of(System.getProperty("doctor")));
+                        Iterator<Notification> notifications = blockingStub.registerDoctor(StringValue.of(System.getProperty("doctor")));
                         while (notifications.hasNext()) {
                             Notification notification = notifications.next();
                             Doctor doctor= notification.getDoctor();
@@ -71,7 +71,8 @@ public class DoctorPagerClient {
                     break;
                 case "unregister":
                     try {
-                        Notification   notification  = blockingStub.unsuscribeDoctor(StringValue.of(System.getProperty("doctor")));
+                        Notification notification  = blockingStub.unsuscribeDoctor(StringValue.of(System.getProperty("doctor")));
+                        System.out.println("Doctor " + notification.getDoctor().getName() + " ("+ notification.getDoctor().getLevel()+ ") unregistered successfully for pager");
                     }catch (Exception e){
                         System.out.println(e.getMessage());
                     }

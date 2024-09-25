@@ -15,17 +15,37 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class NotificationRepository {
     private final Map<String, Queue<Notification>> subscribers = new ConcurrentHashMap<>();
 
-    public void registerSubscriber(String name, Doctor doctor) {
-        subscribers.computeIfAbsent(name, k -> new ConcurrentLinkedQueue<>()).add(Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_SUBSCRIBE).build());
+    public Doctor registerSubscriber(Doctor doctor) {
+        if(subscribers.containsKey(doctor.getName())){
+            return null;
+        }
+        Queue<Notification> q = new ConcurrentLinkedQueue<>();
+        q.add(Notification.newBuilder()
+                .setDoctor(doctor)
+                .setType(NotificationType.NOTIFICATION_SUBSCRIBE)
+                .build()
+        );
+        subscribers.put(doctor.getName(),q);
+//        subscribers.computeIfAbsent(doctor.getName(), k -> new ConcurrentLinkedQueue<>())
+//                .add(Notification.newBuilder()
+//                        .setDoctor(doctor)
+//                        .setType(NotificationType.NOTIFICATION_SUBSCRIBE)
+//                        .build()
+//                );
+        return doctor;
     }
 
     public Notification unregisterSubscriber(String name, Doctor doctor) {
         Notification notification = null;
         Queue<Notification> doctorSubscribers = subscribers.get(name);
         if (doctorSubscribers != null) {
-            notification = Notification.newBuilder().setDoctor(doctor).setType(NotificationType.NOTIFICATION_UNSUBSCRIBE).build();
+            notification = Notification.newBuilder()
+                    .setDoctor(doctor)
+                    .setType(NotificationType.NOTIFICATION_UNSUBSCRIBE)
+                    .build();
             doctorSubscribers.add(notification);
         }
+        subscribers.remove(name);
         return notification;
     }
 

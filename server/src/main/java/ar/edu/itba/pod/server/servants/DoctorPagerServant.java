@@ -7,6 +7,7 @@ import ar.edu.itba.pod.grpc.common.NotificationType;
 import ar.edu.itba.pod.grpc.doctorPageService.DoctorPageServiceGrpc;
 import ar.edu.itba.pod.server.repositories.*;
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Map;
@@ -37,7 +38,13 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     public void registerDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
         Doctor doctor = doctorRepository.getDoctorByName(name);
-        notificationRepository.registerSubscriber(name, doctor);
+        if(doctor == null){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor does not exist").asRuntimeException());
+        }
+        Doctor d =notificationRepository.registerSubscriber(doctor);
+        if(d == null){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The action could not be executed").asRuntimeException());
+        }
         while (notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)) {
             if (!notificationRepository.hasNext(name)) {
                 try {
@@ -57,6 +64,9 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
     @Override
     public void unsuscribeDoctor(StringValue request, StreamObserver<Notification> responseObserver) {
         String name = request.getValue();
+        if(notificationRepository.isRegistered(name)){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor is not registered").asRuntimeException());
+        }
         Doctor doctor = doctorRepository.getDoctorByName(name);
         Notification notification = notificationRepository.unregisterSubscriber(name, doctor);
         responseObserver.onNext(notification);
