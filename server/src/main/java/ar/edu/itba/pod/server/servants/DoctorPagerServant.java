@@ -42,20 +42,20 @@ public class DoctorPagerServant extends DoctorPageServiceGrpc.DoctorPageServiceI
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The doctor does not exist").asRuntimeException());
             return;
         }
-        Doctor d =notificationRepository.registerSubscriber(doctor);
-        if(d == null){
+        Queue<Notification> notifications = notificationRepository.registerSubscriber(doctor);
+        if(notifications == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The action could not be executed").asRuntimeException());
             return;
         }
-        while (notificationRepository.isRegistered(name) || notificationRepository.hasNext(name)) {
-            if (!notificationRepository.hasNext(name)) {
+        while (notificationRepository.isRegistered(name) || !notifications.isEmpty()) {
+            if (notifications.isEmpty()) {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
-                Notification notification = notificationRepository.getNotification(name);
+                Notification notification = notifications.poll();
                 responseObserver.onNext(notification);
             }
         }

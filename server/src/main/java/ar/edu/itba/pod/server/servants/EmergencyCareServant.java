@@ -81,6 +81,8 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
                 .setStatus(0)
                 .build();
         attentionRepository.startAttention(response);
+        notificationRepository.notify(newDoctor.getName(),response,NotificationType.NOTIFICATION_START_ATTENTION);
+
         return response;
     }
     @Override
@@ -89,8 +91,7 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
         if(response.getStatus() < 0){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be executed").asRuntimeException());
         }
-        Doctor doctor = doctorRepository.getDoctorByName(response.getDoctor());
-        notificationRepository.notify(doctor);
+
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

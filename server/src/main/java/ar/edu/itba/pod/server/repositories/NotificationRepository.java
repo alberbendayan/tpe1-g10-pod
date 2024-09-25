@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class NotificationRepository {
     private final Map<String, Queue<Notification>> subscribers = new ConcurrentHashMap<>();
 
-    public Doctor registerSubscriber(Doctor doctor) {
+    public Queue<Notification> registerSubscriber(Doctor doctor) {
         if(subscribers.containsKey(doctor.getName())){
             return null;
         }
@@ -26,13 +26,7 @@ public class NotificationRepository {
                 .build()
         );
         subscribers.put(doctor.getName(),q);
-//        subscribers.computeIfAbsent(doctor.getName(), k -> new ConcurrentLinkedQueue<>())
-//                .add(Notification.newBuilder()
-//                        .setDoctor(doctor)
-//                        .setType(NotificationType.NOTIFICATION_SUBSCRIBE)
-//                        .build()
-//                );
-        return doctor;
+        return q;
     }
 
     public Notification unregisterSubscriber(String name, Doctor doctor) {
