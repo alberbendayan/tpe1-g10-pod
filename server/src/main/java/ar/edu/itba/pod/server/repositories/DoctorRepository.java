@@ -101,8 +101,31 @@ public class DoctorRepository {
                 .build();
     }
 
+    public Doctor freeDoctor(RequestDoctor doctor, int level) {
+        String name = doctor.getName();
+        if (doctors[level - 1].containsKey(name)) {
+            Doctor old = doctors[level - 1].get(name);
+            if (old.getAvailability() != Availability.AVAILABILITY_ATTENDING) {
+                return Doctor.newBuilder()
+                        .setLevel(-2)
+                        .build();
+            }
+            Doctor doc = Doctor.newBuilder()
+                        .setName(name)
+                        .setLevel(old.getLevel())
+                        .setAvailability(doctor.getAvailability())
+                        .setIsRegistered(old.getIsRegistered())
+                        .build();
+                doctors[level - 1].remove(name);
+                doctors[level - 1].put(name, doc);
+                return doc;
+        }
+        return Doctor.newBuilder()
+                .setLevel(-2)
+                .build();
+    }
+
     public Doctor getAvailability(String name) {
-        System.out.println("El dr es:" + name);
         for (int i = 0; i < QTY_LEVELS_DOCTORS; i++) {
             if (doctors[i].containsKey(name)) {
                 return doctors[i].get(name);

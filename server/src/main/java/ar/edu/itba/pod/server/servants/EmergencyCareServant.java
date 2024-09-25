@@ -108,16 +108,22 @@ public class EmergencyCareServant extends EmergencyCareServiceGrpc.EmergencyCare
     public void finishAttention(Attention request, StreamObserver<AttentionResponse> responseObserver) {
         AttentionResponse attentionResponse = attentionRepository.existAttention(request);
         if(attentionResponse == null){
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("El att response es null").asRuntimeException());
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
         }
         if(attentionResponse == null || doctorRepository.getDoctorByName(request.getDoctor()) == null){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
         }
         roomRepository.setFree(attentionResponse.getRoom());
-        doctorRepository.changeAvailability(RequestDoctor.newBuilder()
+
+        Doctor newDoc = doctorRepository.freeDoctor(RequestDoctor.newBuilder()
                 .setName(request.getDoctor())
                 .setAvailability(Availability.AVAILABILITY_AVAILABLE)
-                .build());
+                .build(), doctorRepository.getDoctorByName(request.getDoctor()).getLevel());
+
+        if(newDoc.getLevel() == -2){
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("The attention could not be finished").asRuntimeException());
+        }
+
         Patient patient = patientRepository.getPatient(request.getPatient());
         patientRepository.changeStatus(patient.getName(),patient.getLevel(),State.STATE_FINISHED);
         notificationRepository.notify(request.getDoctor(),attentionResponse,NotificationType.NOTIFICATION_FINISH_ATTENTION);

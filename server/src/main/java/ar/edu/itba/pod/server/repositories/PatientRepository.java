@@ -82,25 +82,25 @@ public class PatientRepository {
 
     public Patient updateLevel(String name, int newLevel) {
         lock.writeLock().lock();
-        try {
-            for (int i = 0; i < QTY_LEVELS; i++) {
-                for (Patient p : waitingPatients[i]) {
-                    if (p.getName().equals(name) && newLevel != patients.get(name).getLevel()) {
-                        waitingPatients[i].remove(patients.get(name));
-                        Patient patient = Patient.newBuilder()
-                                .setLevel(newLevel)
-                                .setName(name)
-                                .setState(State.STATE_WAITING)
-                                .build();
+        Patient oldPatient = patients.get(name);
 
-                        waitingPatients[newLevel - 1].add(patients.get(name));
-                        patients.remove(name);
-                        patients.put(name, patient);
-                        return patient;
-                    }
-                }
+        try {
+            if(!waitingPatients[oldPatient.getLevel()-1].remove(oldPatient) || patients.remove(name) == null){
+                return Patient.newBuilder().setLevel(-2).build();
             }
-            return Patient.newBuilder().setLevel(-2).build();
+            Patient patient = Patient.newBuilder()
+                    .setLevel(newLevel)
+                    .setName(name)
+                    .setState(State.STATE_WAITING)
+                    .build();
+
+            waitingPatients[newLevel - 1].add(patient);
+            patients.put(name, Patient.newBuilder()
+                    .setLevel(newLevel)
+                    .setName(name)
+                    .setState(State.STATE_WAITING)
+                    .build());
+            return patient;
         } finally {
             lock.writeLock().unlock();
         }
