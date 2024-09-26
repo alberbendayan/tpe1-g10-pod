@@ -73,7 +73,7 @@ public class AttentionRepository {
     public List<AttentionResponse> getFinishedAttentions() {
         lock.readLock().lock();
         try {
-            return finishedAttentions;
+            return List.copyOf(finishedAttentions);
         } finally {
             lock.readLock().unlock();
         }
