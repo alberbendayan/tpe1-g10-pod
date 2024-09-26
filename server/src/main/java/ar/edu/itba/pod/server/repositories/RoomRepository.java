@@ -16,7 +16,7 @@ public class RoomRepository {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     public RoomRepository() {
-        this.rooms = Collections.synchronizedList(new ArrayList<>());
+        this.rooms = new ArrayList<>();
     }
 
     public Room addRoom() {
