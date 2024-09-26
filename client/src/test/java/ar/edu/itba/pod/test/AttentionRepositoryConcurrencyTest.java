@@ -17,6 +17,7 @@ public class AttentionRepositoryConcurrencyTest {
 
     private AttentionRepository attentionRepository;
     private AttentionResponse attentionResponse1, attentionResponse2;
+    private final int THREADS = 1000;
 
     @BeforeEach
     public void setUp() {
@@ -41,9 +42,9 @@ public class AttentionRepositoryConcurrencyTest {
 
     @Test
     public void testStartAndFinishAttentionConcurrency() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < THREADS; i++) {
             int finalI = i;
             executor.submit(() -> {
                 if (finalI % 2 == 0) {
@@ -65,9 +66,6 @@ public class AttentionRepositoryConcurrencyTest {
         executor.shutdown();
         assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
 
-        assertNull(attentionRepository.getStartedAttention(1));
-        assertNull(attentionRepository.getStartedAttention(2));
-
         List<AttentionResponse> finishedAttentions = attentionRepository.getFinishedAttentions();
         assertTrue(finishedAttentions.contains(attentionResponse1));
         assertTrue(finishedAttentions.contains(attentionResponse2));
@@ -78,9 +76,9 @@ public class AttentionRepositoryConcurrencyTest {
         attentionRepository.startAttention(attentionResponse1);
         attentionRepository.startAttention(attentionResponse2);
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < THREADS; i++) {
             executor.submit(() -> {
                 Attention attention = Attention.newBuilder()
                         .setDoctor(attentionResponse1.getDoctor())

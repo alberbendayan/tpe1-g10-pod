@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DoctorRepositoryConcurrencyTest {
 
     private DoctorRepository doctorRepository;
+    private final int THREADS = 1000;
 
     @BeforeEach
     public void setUp() {
@@ -22,7 +23,7 @@ public class DoctorRepositoryConcurrencyTest {
 
     @Test
     public void testConcurrentAddDoctors() throws InterruptedException {
-        int threadCount = 10;
+        int threadCount = THREADS;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
@@ -47,7 +48,7 @@ public class DoctorRepositoryConcurrencyTest {
 
     @Test
     public void testConcurrentChangeAvailability() throws InterruptedException {
-        int threadCount = 10;
+        int threadCount = THREADS;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
@@ -81,7 +82,7 @@ public class DoctorRepositoryConcurrencyTest {
 
     @Test
     public void testConcurrentGetDoctorToPatient() throws InterruptedException {
-        int threadCount = 10;
+        int threadCount = THREADS;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < threadCount; i++) {

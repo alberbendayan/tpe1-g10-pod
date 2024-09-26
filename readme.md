@@ -8,8 +8,8 @@
 - Deyheralde, Ben (Legajo: 63559)
 
 ## Docentes
-Meola, Franco Román
-Turrin, Marcelo Emiliano
+- Meola, Franco Román
+- Turrin, Marcelo Emiliano
 
 ## Requisitos
 Debe tener instalado:
@@ -18,6 +18,7 @@ Debe tener instalado:
 
 ## Compilacion
 Correr en la terminal el siguiente comando:
+
 ```bash
 mvn clean install
 ```
@@ -35,6 +36,8 @@ Correr en la terminal el siguiente comando para correr el servidor:
 ```bash
 bin/server/run-server.sh
 ```
+Donde el servidor por default esta escuchando conexiones en el puerto 50052. En caso de querer modificar el puerto hay que ir al archivo Server.java que se encuentra en /server/src/main/java/ar.edu.itba.pod.server y modificar la variable port en la linea 23 al puerto que se quiera usar.
+
 ### Servicios
 En todos los servicios:
 xx.xx.xx.xx:yyyy es la dirección IP y el puerto donde está publicado el servicio de administración
@@ -63,11 +66,14 @@ Donde N es un numero del 1 al 5
 $> sh administrationClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=setDoctor -Ddoctor=name -Davailability=AVAILABILITY
 ```
 Siendo AVAILABILITY uno de los siguientes valores:
-- Available
-- Unavailable
+###### available
+
+###### unavailable
+
+
 - Consultar la disponibilidad de un médico
 ```bash
-$> sh administrationClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=checkDoctor -Ddoctor=John
+$> sh administrationClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=checkDoctor -Ddoctor=name
 ```
 #### Servicio de Sala de Espera
 Funcionalidad: Registrar pacientes que ingresan a la sala, actualizar el nivel de sus emergencias y consultar la espera aproximada de los pacientes para ser atendidos.
@@ -103,18 +109,18 @@ $> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=actionNam
 actionNames:
 - Iniciar la atención de una emergencia en un consultorio
 ```bash
-$> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=carePatient -Droom=N
+$> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=carePatient -Droom=roomNumber
 ```
-Donde N es un numero del 1 al 5
+
 - Iniciar la atención de emergencias en los consultorios libres
 ```bash
 $> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=careAllPatients
 ```
 - Finalizar la atención de una emergencia en un consultorio
 ```bash
-$> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=dischargePatient -Droom=N -Ddoctor=doctorName -Dpatient=patientName
+$> sh emergencyCareClient.sh -DserverAddress=xx.xx.xx.xx:yyyy -Daction=dischargePatient -Droom=roomNumber -Ddoctor=doctorName -Dpatient=patientName
 ```
-Donde N es un numero del 1 al 5
+
 ### Servicio de Notificación al Personal
 Funcionalidad: Registrar a los médicos para que sean notificados de los eventos relacionados a las emergencias, anular ese registro y consultar el historial de eventos que sucedieron
 Usuario: Médicos de la Sala de Emergencias

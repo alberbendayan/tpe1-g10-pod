@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoomRepositoryConcurrencyTest {
 
     private RoomRepository roomRepository;
+    private final int THREADS = 1000;
 
     @BeforeEach
     public void setUp() {
@@ -21,7 +22,7 @@ public class RoomRepositoryConcurrencyTest {
 
     @Test
     public void testConcurrentRoomAdditionAndOccupation() throws InterruptedException {
-        int threadCount = 100;
+        int threadCount = THREADS;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
@@ -53,7 +54,7 @@ public class RoomRepositoryConcurrencyTest {
 
     @Test
     public void testConcurrentSetFree() throws InterruptedException {
-        int threadCount = 100;
+        int threadCount = THREADS;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
