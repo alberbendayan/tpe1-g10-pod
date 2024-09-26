@@ -23,6 +23,9 @@ Correr en la terminal el siguiente comando:
 mvn clean install
 ```
 ```bash
+mvn clean package -pl api -am
+```
+```bash
 ./tpe_builder.sh
 ```
 Con los siguientes argumentos:
